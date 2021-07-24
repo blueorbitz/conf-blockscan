@@ -1,0 +1,12 @@
+modules:
+  macro:
+    - key: conf-blockscan-test
+      function: main
+      title: Blockscan Test
+      description: Test Marco
+  function:
+    - key: main
+      handler: index.run
+app:
+  id: ari:cloud:ecosystem::app/432fed33-28ea-4214-8f6c-8f5ddacc0435
+  name: conf-blockscan
