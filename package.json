@@ -1,8 +1,7 @@
 {
-  "name": "forge-ui-starter",
-  "version": "1.0.0",
+  "name": "conf-blockscan",
+  "version": "0.0.1",
   "main": "index.js",
-  "license": "MIT",
   "private": true,
   "scripts": {
     "lint": "./node_modules/.bin/eslint src/**/* || npm run --silent hook-errors",
@@ -13,6 +12,8 @@
     "eslint-plugin-react-hooks": "^2.1.2"
   },
   "dependencies": {
-    "@forge/ui": "^0.13.1"
+    "@forge/api": "^2.1.0",
+    "@forge/ui": "^0.13.1",
+    "lodash": "^4.17.21"
   }
 }

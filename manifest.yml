@@ -4,9 +4,16 @@ modules:
       function: main
       title: Blockscan Test
       description: Test Marco
+      config:
+          function: config-function-key
   function:
     - key: main
       handler: index.run
+    - key: config-function-key
+      handler: index.config
 app:
   id: ari:cloud:ecosystem::app/432fed33-28ea-4214-8f6c-8f5ddacc0435
   name: conf-blockscan
+permissions:
+  scopes:
+    - read:confluence-content.summary

@@ -36,3 +36,14 @@ forge tunnel
 ## Support
 
 See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how to get help and provide feedback.
+
+## Improvement
+
+- Stream Forge logs when using forge tunnel
+- Not showing error when library import was not found.
+  - Debugging why config is not showing is frustrating
+  - (After debug) - No clear direction when should use `forge deploy` when running `forge tunnel` to reload the manifest.yml
+
+## Reference
+
+- Blockchain node api [GetBlock](https://getblock.io/en/)
