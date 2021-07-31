@@ -43,6 +43,10 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
 - Not showing error when library import was not found.
   - Debugging why config is not showing is frustrating
   - (After debug) - No clear direction when should use `forge deploy` when running `forge tunnel` to reload the manifest.yml
+- Recommended best practice for large-file structure
+  - nested folder cannot detect index.jsx
+- Forge UI kit component have limited functionality.
+  - Should at least have CSS capability to overwrite
 
 ## Reference
 

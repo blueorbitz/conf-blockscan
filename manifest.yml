@@ -1,19 +1,37 @@
 modules:
   macro:
-    - key: conf-blockscan-test
-      function: main
+    - key: blockscan-test
+      function: test-func
       title: Blockscan Test
       description: Test Marco
       config:
-          function: config-function-key
+          function: test-config
+    - key: blockscan-balance
+      title: Blockscan Balance
+      description: Balance of a blockchain account
+      resource: main
+      resolver:
+        function: balance-resolver
+      config:
+        function: balance-config
   function:
-    - key: main
+    - key: test-func
       handler: index.run
-    - key: config-function-key
+    - key: test-config
       handler: index.config
+    - key: balance-resolver
+      handler: balance.resolver
+    - key: balance-config
+      handler: balance.config
 app:
   id: ari:cloud:ecosystem::app/432fed33-28ea-4214-8f6c-8f5ddacc0435
   name: conf-blockscan
+  runtime:
+    snapshots: false
 permissions:
   scopes:
     - read:confluence-content.summary
+    - storage:app
+resources:
+  - key: main
+    path: static/spa/build
