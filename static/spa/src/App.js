@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Fragment } from 'react';
+import React, { useEffect, useState } from 'react';
 import { invoke } from '@forge/bridge';
 
 // Atlaskit
@@ -7,48 +7,47 @@ import Spinner from '@atlaskit/spinner';
 
 // Custom Styles
 import {
-  Card, Row, Icon, IconContainer, Status, SummaryActions, SummaryCount, SummaryFooter,
-  ScrollContainer, Form, LoadingContainer
+  Card, SummaryFooter, LoadingContainer,
 } from './Styles';
 
-function App() {
-  const [samples, setSample] = useState(null);
-  const [input, setInput] = useState('');
-  const [isFetched, setIsFetched] = useState(false);
-  const [isDeleteAllShowing, setDeleteAllShowing] = useState(false);
-  const [isDeletingAll, setDeletingAll] = useState(false);
+export default class App extends React.Component {
+  constructor(props) {
+    super(props);
 
-  if (!isFetched) {
-    setIsFetched(true);
-    invoke('get-all').then(setSample);
+    this.state = {
+      balance: null,
+    };
   }
 
-  const onSubmit = (e) => {
-    e.preventDefault();
-  };
+  async componentDidMount() {
+    const balance = await invoke('get-balance');
+    this.setState({ balance });
+  }
 
-  useEffect(() => {
-    if (!samples) return;
-    console.log('useEffect');
-  }, [samples]);
+  componentWillUnmount() {
+  }
 
-  if (!samples) {
-    return (
+  render() {
+    const { balance } = this.state;
+
+    const AppLoading = () =>
       <Card>
         <LoadingContainer>
           <Spinner size="large" />
         </LoadingContainer>
-      </Card>
-    );
+      </Card>;
+
+    const AppContent = (props) => {
+      return (<Card>
+        <SummaryFooter>
+          <Lozenge>{ props.address }</Lozenge>
+        </SummaryFooter>
+      </Card>);
+    };
+
+    if (balance == null)
+      return <AppLoading />;
+    else
+      return <AppContent address={balance.address || ''}/>;
   }
-
-  return (
-    <Card>
-      <SummaryFooter>
-        <Lozenge>Completed</Lozenge>
-      </SummaryFooter>
-    </Card>
-  );
 }
-
-export default App;

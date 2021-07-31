@@ -7,7 +7,6 @@ import ForgeUI, {
   useConfig,
 } from '@forge/ui';
 import { defaultConfig } from './constant';
-// import bApi from './utils/blockchain-api';
 
 const Config = () => {
   const config = useConfig() || defaultConfig;

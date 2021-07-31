@@ -9,7 +9,7 @@ modules:
     - key: blockscan-balance
       title: Blockscan Balance
       description: Balance of a blockchain account
-      resource: main
+      resource: balance-spa
       resolver:
         function: balance-resolver
       config:
@@ -32,6 +32,15 @@ permissions:
   scopes:
     - read:confluence-content.summary
     - storage:app
+  content:
+    styles:
+      - 'unsafe-inline'
+  external:
+    fetch:
+      backend:
+        - '*.blockcypher.com'
 resources:
-  - key: main
+  - key: balance-spa
     path: static/spa/build
+    tunnel:
+      port: 3000
