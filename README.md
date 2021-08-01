@@ -47,6 +47,8 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
   - nested folder cannot detect index.jsx
 - Forge UI kit component have limited functionality.
   - Should at least have CSS capability to overwrite
+  - eg. enable `style` for simple overwrite
+  - Modal no ok button, document could explain the intention of such design
 - Hot-reloading for custom-ui to make it easier for development
   - Eg. enable `url` to serve `localhost:3000` in the `resource`
   - (solved) https://developer.atlassian.com/platform/forge/tunneling/

@@ -7,9 +7,7 @@ import ForgeUI, {
   Link,
   useConfig,
   useState,
-  useEffect,
 } from '@forge/ui';
-import { defaultConfig } from './constant';
 import BlockAPI, {
   satoshiToBtc,
 } from '../utils/blockchain-api';

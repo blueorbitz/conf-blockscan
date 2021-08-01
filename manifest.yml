@@ -1,11 +1,10 @@
 modules:
+  confluence:spacePage:
+    - key: blockscan-space
+      function: space
+      title: Blockscan Setting Page
+      route: space-configuration
   macro:
-    - key: blockscan-test
-      function: test-func
-      title: Blockscan Test
-      description: Test Marco
-      config:
-          function: test-config
     - key: blockscan-balance
       title: Blockscan Balance
       description: Balance of a blockchain account
@@ -13,10 +12,8 @@ modules:
       config:
         function: balance-config
   function:
-    - key: test-func
-      handler: index.run
-    - key: test-config
-      handler: index.config
+    - key: space
+      handler: space.handler
     - key: balance-resolver
       handler: balance.resolver
     - key: balance-macro
@@ -30,7 +27,7 @@ app:
     snapshots: false
 permissions:
   scopes:
-    - read:confluence-content.summary
+    # - read:confluence-content.summary
     - storage:app
   content:
     styles:
@@ -38,7 +35,7 @@ permissions:
   external:
     fetch:
       backend:
-        - '*.blockcypher.com'
+        - 'api.blockcypher.com'
 resources:
   - key: balance-spa
     path: static/spa/build
