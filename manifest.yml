@@ -9,9 +9,7 @@ modules:
     - key: blockscan-balance
       title: Blockscan Balance
       description: Balance of a blockchain account
-      resource: balance-spa
-      resolver:
-        function: balance-resolver
+      function: balance-macro
       config:
         function: balance-config
   function:
@@ -21,6 +19,8 @@ modules:
       handler: index.config
     - key: balance-resolver
       handler: balance.resolver
+    - key: balance-macro
+      handler: balance.macro
     - key: balance-config
       handler: balance.config
 app:

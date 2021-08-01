@@ -14,13 +14,24 @@ export default class Blockcy {
   }
 
   async _get(url, params) {
-    var urlr = URL_ROOT + this.coin + '/' + this.chain + url;
-    const _params = Object.assign({}, params, { token: this.token });
-    console.log('blockcy _get:', urlr);
+    try {
+      if (this.coin == null || this.chain == null)
+        throw new Error('Invalid chain is selected');
+      
+      const urlr = URL_ROOT + this.coin + '/' + this.chain + url;
+      const _params = Object.assign({}, params, { token: this.token });
+      console.log('blockcy _get:', urlr);
 
-    const response = await fetch(`${urlr}?${stringify(_params)}`);
-    const json = await response.json();
-    return json;
+      const response = await fetch(`${urlr}?${stringify(_params)}`);
+      const json = await response.json();
+      return json;
+    } catch (e) {
+      console.error(e);
+      if (e.error)
+        return e;
+      else
+      return { error: e.message };
+    }
   }
 
   async getAddrBal(addr, params = {}) {

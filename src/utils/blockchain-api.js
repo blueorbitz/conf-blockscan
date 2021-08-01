@@ -8,3 +8,16 @@ export default class BlockchainApi {
     return addrBal;
   }
 }
+
+export const coinNetwork = {
+  btc: ['main', 'test3'],
+  doge: ['main'],
+  ltc: ['main'],
+  eth: ['main'],
+  bcy: ['test'],
+  beth: ['test'],
+};
+
+export function satoshiToBtc(value) {
+  return value / 100000000
+}
