@@ -49,9 +49,14 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
   - Should at least have CSS capability to overwrite
   - eg. enable `style` for simple overwrite
   - Modal no ok button, document could explain the intention of such design
+  - Select `onChange` event, and Input `onInput` event.
 - Hot-reloading for custom-ui to make it easier for development
   - Eg. enable `url` to serve `localhost:3000` in the `resource`
   - (solved) https://developer.atlassian.com/platform/forge/tunneling/
+- MacroConfig documentation about use config and form is interlink.
+  - PS: it is documented in MacroConfig
+  - However, error message could be better. Either in console or UI.
+  - Stating `MacroConfig` only supprt type, instead of just yellow warning sign.
 
 ## Reference
 

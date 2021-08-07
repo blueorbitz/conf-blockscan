@@ -9,34 +9,68 @@ import ForgeUI, {
   useState,
   useEffect,
 } from '@forge/ui';
-import { defaultConfig } from './constant';
 import { coinNetwork } from '../utils/blockchain-api';
+import * as storage from '../utils/storage';
+
+const InputAddress = ({ coinType }) => {
+  return (
+    <Fragment>
+      <Select label='Coin' name='coin'>
+        {Object.keys(coinNetwork).map(coin =>
+          <Option label={coin.toUpperCase()} value={coin} />
+        )}
+      </Select>
+      <Select label='Network' name='network'>
+        {coinNetwork[coinType].map(network =>
+          <Option label={network} value={network} />
+        )}
+      </Select>
+      <TextField label='Wallet Address' name='address' />
+    </Fragment>
+  );
+};
+
+const InputStore = ({ wallets }) =>
+  <Fragment>
+    <Select label='Wallet' name='wallet'>
+      {wallets.map(wallet =>
+        <Option label={wallet.value.name} value={wallet.key} />
+      )}
+    </Select>
+  </Fragment>;
 
 const Config = () => {
-  const config = useConfig() || {};
+  const [type, setType] = useState('address');
 
-  const [coin, setCoin] = useState(config.coin);
-  const [network, setNetwork] = useState(config.network);
-  const [address, setAddress] = useState(config.address);
+  const [walletList, setWalletList] = useState([]);
+  const [coinType, setCoinType] = useState('btc');
 
   useEffect(async () => {
-    // console.log('effect', coinNetwork);
-    // console.log('effect', coin, network, address);
-  }, [coin, network, address]);
+    const config = useConfig() || {};
+
+    if (!walletList.length) {
+      const results = await storage.getWallets();
+      setWalletList(results);
+    }
+
+    if (config.type)
+      setType(config.type);
+    
+    if (config.coin)
+      setCoinType(config.coin);
+  }, []);
 
   return (
     <Fragment>
-        <Select label='Coin' name='coin' value={config.coin}>
-          {
-            Object.keys(coinNetwork).map(coin => <Option label={coin} value={coin} />)
-          }
-        </Select>
-        <Select label='Network' name='network' value={config.network}>
-          {
-            coinNetwork[coin || 'btc'].map(network => <Option label={network} value={network} />)
-          }
-        </Select>
-        <TextField label='Wallet Address' name='address' value={config.address} />
+      <Select label='Type' name='type'>
+        <Option label='Address' defaultSelected value='address' />
+        <Option label='Store' value='store' />
+      </Select>
+      {
+        type === 'address'
+          ? <InputAddress coinType={coinType} />
+          : <InputStore wallets={walletList} />
+      }
     </Fragment>
   );
 };
