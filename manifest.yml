@@ -6,11 +6,43 @@ modules:
       route: space-configuration
   macro:
     - key: blockscan-balance
+      # include erc20 token balance: https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055&address=0xe04f27eb70e025b78871a2ad7eabe85e61212761&tag=latest&apikey=YourApiKeyToken
       title: Blockscan Balance
       description: Balance of a blockchain account
       function: balance-macro
       config:
         function: balance-config
+    - key: blockscan-transaction-list
+      # https://api.blockcypher.com/v1/btc/main/addrs/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD
+      # https://api.etherscan.io/api?module=account&action=tokentx&address=0x5922b0BBAe5182f2B70609f5dFD08f7DA561F5A4&apikey=DFTPCDC3CQ2RB5V7GZ5SD9HV3C8JRJUDBU
+      title: Blockscan Transaction
+      description: Transaction information of an account
+      function: transaction-list-macro
+      config:
+        function: balance-config
+    - key: blockscan-transaction-hash
+      # https://api.blockcypher.com/v1/btc/main/txs/f854aebae95150b379cc1187d848d58225f3c4157fe992bcd166f58bd5063449
+      title: Blockscan Transaction Hash
+      description: Information of a transaction
+      function: transaction-hash-macro
+      config:
+        function: transaction-hash-config
+    - key: blockscan-block
+      # https://api.blockcypher.com/v1/btc/main/blocks/00000000000000000003dc20b868d17121303308f6bba329302e75913f0790db
+      title: Blockscan Block Info
+      description: Information about the block
+      function: block-macro
+      config:
+        function: block-config
+    - key: blockscan-coin-info
+      # coin id: api.coingecko.com/api/v3/coins/million
+      # list of asset: api.coingecko.com/api/v3/asset_platforms
+      # asset -> contract: api.coingecko.com/api/v3/coins/ethereum/contract/0x6B4c7A5e3f0B99FCD83e9c089BDDD6c7FCe5c611
+      title: Blockscan Coin Detail
+      description: Information about a coin or token
+      function: coin-macro
+      config:
+        function: coin-config
   function:
     - key: space
       handler: space.handler
@@ -20,6 +52,20 @@ modules:
       handler: balance.macro
     - key: balance-config
       handler: balance.config
+    - key: transaction-list-macro
+      handler: transaction.listMacro
+    - key: transaction-hash-macro
+      handler: transaction.hashMacro
+    - key: transaction-hash-config
+      handler: transaction.hashConfig
+    - key: block-macro
+      handler: block.macro
+    - key: block-config
+      handler: block.config
+    - key: coin-macro
+      handler: coin.macro
+    - key: coin-config
+      handler: coin.config
 app:
   id: ari:cloud:ecosystem::app/432fed33-28ea-4214-8f6c-8f5ddacc0435
   name: conf-blockscan
@@ -35,7 +81,10 @@ permissions:
   external:
     fetch:
       backend:
-        - 'api.blockcypher.com'
+        - '*'
+        # - 'api.blockcypher.com'
+        # - 'api.etherscan.io'
+        # - 'api.coingecko.com'
 resources:
   - key: balance-spa
     path: static/spa/build
