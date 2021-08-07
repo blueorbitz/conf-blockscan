@@ -7,9 +7,8 @@ import ForgeUI, {
   Link,
   useConfig,
   useState,
-  TextField,
-  Checkbox,
 } from '@forge/ui';
+import { storage } from '@forge/api';
 import BlockAPI, {
   satoshiToBtc,
 } from '../utils/blockchain-api';
@@ -50,6 +49,33 @@ const RenderBalance = ({ coin, data }) => {
   }
 }
 
+const RenderStore = () => {
+  const config = useConfig() || {};
+  if (config.wallet === '' || config.wallet == null)
+    return <Text>Please specify wallet from store.</Text>;
+
+  const [wallet, setWallet] = useState({});
+  const [balance] = useState(async () => {
+    const result = await storage.get(config.wallet);
+    if (result == null)
+      return { error: 'Wallet key not found' };
+
+    setWallet(result);
+    return await fetchAddress(result.coin, result.network, result.address);
+  });
+
+  return balance.error
+    ? <Text>{balance.error}</Text>
+    : <Fragment>
+      <Text>
+        <Strong>Wallet </Strong>
+        {wallet.name}
+      </Text>
+      <RenderBalance coin={wallet.coin} data={balance} />
+    </Fragment>
+    
+}
+
 const RenderAddress = () => {
   const config = useConfig() || {};
   const [balance] = useState(async () => await fetchAddress(config.coin, config.network, config.address));
@@ -66,7 +92,7 @@ const RenderStrategy = () => {
     case 'address':
       return <RenderAddress />;
     case 'store':
-      return <Text>Store</Text>;
+      return <RenderStore />;
     default:
       return <Text>Please configure blockscan.</Text>
   }
