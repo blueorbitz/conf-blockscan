@@ -12,12 +12,16 @@ export default class BlockchainApi {
 export const coinNetwork = {
   btc: ['main', 'test3'],
   doge: ['main'],
-  ltc: ['main'],
+  // ltc: ['main'],
   eth: ['main'],
-  bcy: ['test'],
-  beth: ['test'],
+  // bcy: ['test'],
+  // beth: ['test'],
 };
 
 export function satoshiToBtc(value) {
-  return value / 100000000
+  return value / 100000000;
+}
+
+export function gweiToEth(value) {
+  return value / 1000000000000000000;
 }

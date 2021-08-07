@@ -11,6 +11,7 @@ import ForgeUI, {
 import { storage } from '@forge/api';
 import BlockAPI, {
   satoshiToBtc,
+  gweiToEth,
 } from '../utils/blockchain-api';
 
 const fetchAddress = async (coin, network, address) => {
@@ -42,9 +43,53 @@ const RenderBTC = ({ data = {} }) =>
     </Text>
   </Fragment>;
 
+const RenderETH = ({ data = {} }) =>
+  <Fragment>
+    <Text>
+      <Strong>Address </Strong>
+      <Link
+        href={'https://etherscan.io/address/' + data.address}
+        openNewTab={true}
+      >
+        {data.address}
+      </Link>
+    </Text>
+    <Text>
+      <Strong>Balance </Strong>
+      {gweiToEth(data.balance || 0)} ETH
+    </Text>
+    <Text>
+      <Strong>Unconfirmed Balance </Strong>
+      {gweiToEth(data.unconfirmed_balance || 0)} ETH
+    </Text>
+  </Fragment>;
+
+const RenderDoge = ({ data }) =>
+  <Fragment>
+    <Text>
+      <Strong>Address </Strong>
+      <Link
+        href={'https://dogechain.info/address/' + data.address}
+        openNewTab={true}
+      >
+        {data.address}
+      </Link>
+    </Text>
+    <Text>
+      <Strong>Balance </Strong>
+      {satoshiToBtc(data.balance || 0)} DOGE
+    </Text>
+    <Text>
+      <Strong>Unconfirmed Balance </Strong>
+      {satoshiToBtc(data.unconfirmed_balance || 0)} DOGE
+    </Text>
+  </Fragment>;
+
 const RenderBalance = ({ coin, data }) => {
-  switch(coin) {
-    case 'btc': return <RenderBTC data={data}/>;
+  switch (coin) {
+    case 'btc': return <RenderBTC data={data} />;
+    case 'eth': return <RenderETH data={data} />;
+    case 'doge': return <RenderDoge data={data} />;
     default: return <Text>Coin type render not supported</Text>;
   }
 }
@@ -73,7 +118,7 @@ const RenderStore = () => {
       </Text>
       <RenderBalance coin={wallet.coin} data={balance} />
     </Fragment>
-    
+
 }
 
 const RenderAddress = () => {
@@ -87,7 +132,7 @@ const RenderAddress = () => {
 
 const RenderStrategy = () => {
   const config = useConfig() || {};
-  
+
   switch (config.type) {
     case 'address':
       return <RenderAddress />;
