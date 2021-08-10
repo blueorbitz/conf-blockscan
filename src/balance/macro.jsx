@@ -14,7 +14,7 @@ import BlockAPI, {
   gweiToEth,
 } from '../utils/blockchain-api';
 
-const fetchAddress = async (coin, network, address) => {
+const fetchCoinBalance = async (coin, network, address) => {
   const isEmpty = (str) => str === '' || str == null;
   if (isEmpty(coin) || isEmpty(network) || isEmpty(address))
     return { error: 'Incomplete information to query Blockscan!' };
@@ -130,14 +130,39 @@ const RenderAddress = () => {
     : <RenderBalance coin={config.coin} data={balance} />
 };
 
+const configCoinBalance = async () => {
+  const config = useConfig() || {};
+  let param = {};
+
+  if (config.source === 'source')
+    param = await storage.get(config.wallet);
+  else
+    param = { ...config }; // Object assign
+  
+  if (param == null)
+    return { error: 'Wallet key not found' };
+
+  const { platform, address } = param;
+  return await fetchCoinBalance(platform, 'main', address);
+}
+
+const RenderCoin = () => {
+  const config = useConfig() || {};
+  const [balance] = useState(async () => await configCoinBalance());
+  
+  return balance.error
+    ? <Text>{balance.error}</Text>
+    : <RenderBalance coin={config.coin} data={balance} />
+};
+
 const RenderStrategy = () => {
   const config = useConfig() || {};
 
-  switch (config.type) {
-    case 'address':
-      return <RenderAddress />;
-    case 'store':
-      return <RenderStore />;
+  switch (`${config.type}-${config.source}`) {
+    case 'coin-store':
+    case 'coin-manual':
+    case 'token-store':
+    case 'token-manual':
     default:
       return <Text>Please configure blockscan.</Text>
   }

@@ -17,7 +17,7 @@ import ForgeUI, {
   useState,
   useEffect,
 } from '@forge/ui';
-import { coinNetwork } from '../utils/blockchain-api';
+import { supportedCoins } from '../utils/blockchain-api';
 import * as storage from '../utils/storage';
 
 const ConfirmDeleteModal = ({ wallet, onClose }) => {
@@ -38,23 +38,29 @@ const ConfirmDeleteModal = ({ wallet, onClose }) => {
 const WalletTable = ({ list, reload }) => {
   const [isOpen, setOpen] = useState(false);
   const [deleteWallet, setDeleteWallet] = useState(null);
-  console.log(list);
 
   return (
     <Fragment>
       <Table>
         <Head>
+          <Cell><Text>Type</Text></Cell>
           <Cell><Text>Name</Text></Cell>
-          <Cell><Text>Coin</Text></Cell>
-          <Cell><Text>Network</Text></Cell>
+          <Cell><Text>Platform</Text></Cell>
           <Cell><Text>address</Text></Cell>
           <Cell><Text>Action</Text></Cell>
         </Head>
         {list.map(o => o.value).map((wallet, i) =>
           <Row>
+            <Cell>
+              <Button 
+                text={wallet.type} 
+                icon={wallet.type === 'wallet' ? 'suitcase' : 'document' }
+                appearance='subtle'
+                disabled
+              />
+            </Cell>
             <Cell><Text>{wallet.name}</Text></Cell>
-            <Cell><Text>{wallet.coin}</Text></Cell>
-            <Cell><Text>{wallet.network}</Text></Cell>
+            <Cell><Text>{wallet.platform}</Text></Cell>
             <Cell><Text>{wallet.address}</Text></Cell>
             <Cell>
               <ButtonSet>
@@ -82,56 +88,70 @@ const WalletTable = ({ list, reload }) => {
 };
 
 const AddWalletModal = (props) => {
-  const [name] = useState(null);
-  const [coin] = useState('btc');
-  const [network] = useState(null);
-  const [address] = useState(null);
-
   return (
     <ModalDialog header="Add Wallet" onClose={props.onClose}>
       <Form onSubmit={props.onSubmit}>
-        <TextField label='Wallet Name' name='name' value={name} />
-        <Select label='Coin' name='coin' value={coin}>
+        <TextField label='Wallet Name' name='name' />
+        <Select label='Platform' name='platform' >
           {
-            Object.keys(coinNetwork).map(_coin => <Option label={_coin} value={_coin} />)
+            supportedCoins.map(coin => <Option label={coin.name} value={coin.value}/>)
           }
         </Select>
-        <Select label='Network' name='network' value={network}>
-          {
-            coinNetwork[coin].map(_network => <Option label={_network} value={_network} />)
-          }
+        <TextField label='Wallet Address' name='address' />
+      </Form>
+    </ModalDialog>
+  );
+}
+
+const AddContractModal = (props) => {
+  return (
+    <ModalDialog header="Add Contract" onClose={props.onClose}>
+      <Form onSubmit={props.onSubmit}>
+        <TextField label='Contract Name' name='name' />
+        <Select label='Platform' name='platform'>
+          <Option label='Ethereum' value='eth' />
         </Select>
-        <TextField label='Wallet Address' name='address' value={address} />
+        <TextField label='Contract Address' name='address' />
       </Form>
     </ModalDialog>
   );
 }
 
 const App = () => {
-  const [isOpen, setOpen] = useState(false);
+  const [isWalletOpen, setWalletOpen] = useState(false);
+  const [isContractOpen, setContractOpen] = useState(false);
   const [isReload, setReload] = useState(true);
-  const [wallets, setWallets] = useState([]);
+  const [storageList, setStorageList] = useState([]);
 
   useEffect(async () => {
     if (isReload === false)
       return;
     console.log('reloading', isReload);
-    const results = await storage.getWallets();
-    setWallets(results);
+    const results = await storage.getAllWHash();
+    setStorageList(results);
     setReload(false);
   }, [isReload])
 
   return (
     <Fragment>
-      <WalletTable list={wallets} reload={setReload} />
-      <Button text='Add Wallet' icon='editor-add' onClick={() => setOpen(true)} />
-      {isOpen && <AddWalletModal
+      <WalletTable list={storageList} reload={setReload} />
+      <Button text='Add Wallet' icon='editor-add' onClick={() => setWalletOpen(true)} />
+      <Button text='Add Contract' icon='editor-add' onClick={() => setContractOpen(true)} />
+      {isWalletOpen && <AddWalletModal
         onSubmit={async form => {
-          storage.addWallet(form);
+          storage.addWallet({ type: 'wallet', ...form });
           setReload(true);
-          setOpen(false);
+          setWalletOpen(false);
         }}
-        onClose={() => setOpen(false)}
+        onClose={() => setWalletOpen(false)}
+      />}
+      {isContractOpen && <AddContractModal
+        onSubmit={async form => {
+          storage.addWallet({ type: 'contract', ...form });
+          setReload(true);
+          setContractOpen(false);
+        }}
+        onClose={() => setContractOpen(false)}
       />}
     </Fragment>
   );

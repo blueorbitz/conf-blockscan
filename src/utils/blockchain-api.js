@@ -9,14 +9,11 @@ export default class BlockchainApi {
   }
 }
 
-export const coinNetwork = {
-  btc: ['main', 'test3'],
-  doge: ['main'],
-  // ltc: ['main'],
-  eth: ['main'],
-  // bcy: ['test'],
-  // beth: ['test'],
-};
+export const supportedCoins = [
+  { name: 'Bitcoin', value: 'btc' },
+  { name: 'Ethereum', value: 'eth' },
+  { name: 'Doge', value: 'doge' },
+];
 
 export function satoshiToBtc(value) {
   return value / 100000000;
