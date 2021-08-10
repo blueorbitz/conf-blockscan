@@ -5,50 +5,31 @@ import ForgeUI, {
   useConfig,
   useState,
   Fragment,
+  Table,
   Head,
+  Row,
   Cell,
+  Link,
+  DateLozenge,
 } from '@forge/ui';
 import BlockAPI, {
   satoshiToBtc,
   gweiToEth,
 } from '../utils/blockchain-api';
+import { parseCoinConfig } from '../utils';
 
-const fetchTransactions = async ({ type, coin, network, contractAddr, address }) => {
-  switch (type) {
-    case 'coin':
-      return await fetchTransactionsCoin();
-    case 'erc20':
-      return await fetchTransactionsErc20();
-    case 'erc721':
-      return await fetchTransactionsERC721();
-    default:
-      return { error: 'Unsupported type' };
-  }
+const fetchTransactionCoin = async () => {
+  const config = useConfig() || {};
+  const param = await parseCoinConfig(config);
+
+  const { platform, address } = param;
+  const result = await BlockAPI.GetCoinTransaction(platform, 'main', address);
+  return { ...param, ...result };
 };
 
-const RenderStore = () => {
-  return <Text>Hello Store</Text>;
-}
+const fetchTransactionsToken = async () => {
 
-const RenderAddress = () => {
-  const config = useConfig() || {};
-  const [transactions] = useState(async () => await fetchTransactions(config));
-
-  return <Text>Hello Address</Text>;
 };
-
-const RenderStrategy = () => {
-  const config = useConfig() || {};
-
-  switch (config.type) {
-    case 'address':
-      return <RenderAddress />;
-    case 'store':
-      return <RenderStore />;
-    default:
-      return <Text>Please configure blockscan.</Text>
-  }
-}
 
 const TransactionBTC = ({ list, me }) => {
   const reduceList = list.reduce((total, current) => {
@@ -72,8 +53,8 @@ const TransactionBTC = ({ list, me }) => {
   }, []);
 
   const getValue = (txs = []) => txs
-    .map(o => satoshiToBtc(o.value) + 'BTC')
-    .join(', ');
+    .map(o => satoshiToBtc(o.value) + ' BTC')
+    .join('\n');
 
   return <Fragment>
     <Table>
@@ -85,10 +66,20 @@ const TransactionBTC = ({ list, me }) => {
       </Head>
       {reduceList.map(o =>
         <Row>
-          <Cell><Text>{o.tx_hash}</Text></Cell>
-          <Cell><Text>{getValue(o.input) + ' BTC'}</Text></Cell>
-          <Cell><Text>{getValue(o.output) + ' BTC'}</Text></Cell>
-          <Cell><Text>{o.confirmed}</Text></Cell>
+          <Cell>
+            <Text>
+              <Link href={'https://www.blockchain.com/btc/tx/' + o.tx_hash}>
+                {o.tx_hash.slice(0, 20) + '...'}
+              </Link>
+            </Text>
+          </Cell>
+          <Cell><Text>{getValue(o.input)}</Text></Cell>
+          <Cell><Text>{getValue(o.output)}</Text></Cell>
+          <Cell>
+            <Text>
+              <DateLozenge value={new Date(o.confirmed).getTime()} />
+            </Text>
+          </Cell>
         </Row>
       )}
     </Table>
@@ -96,34 +87,58 @@ const TransactionBTC = ({ list, me }) => {
 };
 
 const TransactionETH = ({ list, me }) => {
+  const formettedMe = me.slice(0, 2) === '0x'
+    ? me.slice(2).toLowerCase() : me.toLowerCase();
+
+  const FormatAddress = ({ address }) =>
+    <Text>
+      <Link href={'https://etherscan.io/address/' + address}>
+        {(address !== formettedMe) ? (address.slice(0, 12) + '...') : 'Me'}
+      </Link>
+    </Text>;
+
   return <Fragment>
     <Table>
       <Head>
         <Cell><Text>Tx Hash</Text></Cell>
         <Cell><Text>From</Text></Cell>
         <Cell><Text>To</Text></Cell>
-        <Cell><Text>Total</Text></Cell>
-        <Cell><Text>Fee</Text></Cell>
+        <Cell><Text>Total(ETH)</Text></Cell>
+        <Cell><Text>Fee(ETH)</Text></Cell>
         <Cell><Text>Confirmed</Text></Cell>
       </Head>
-      {list.map(o =>
+      {list.map((o, i) =>
         <Row>
-          <Cell><Text>{o.hash}</Text></Cell>
-          <Cell><Text>{
-            o.inputs
-              .map(o => o.addresses)
-              .flat()
-              .join(', ')
-          }</Text></Cell>
-          <Cell><Text>{
-            o.outputs
-              .map(o => o.addresses)
-              .flat()
-              .join(', ')
-          }</Text></Cell>
-          <Cell><Text>{gweiToEth(o.total) + ' ETH'}</Text></Cell>
-          <Cell><Text>{gweiToEth(o.fees) + ' ETH'}</Text></Cell>
-          <Cell><Text>{o.confirmed}</Text></Cell>
+          <Cell>
+            <Text>
+              <Link href={'https://etherscan.io/tx/' + o.hash}>
+                {o.hash.slice(0, 12) + '...'}
+              </Link>
+            </Text>
+          </Cell>
+          <Cell>
+            <Fragment>
+              {o.inputs
+                .map(o => o.addresses)
+                .flat()
+                .map(o => <FormatAddress address={o} />)}
+            </Fragment>
+          </Cell>
+          <Cell>
+            <Fragment>
+              {o.outputs
+                .map(o => o.addresses)
+                .flat()
+                .map(o => <FormatAddress address={o} />)}
+            </Fragment>
+          </Cell>
+          <Cell><Text>{gweiToEth(o.total)}</Text></Cell>
+          <Cell><Text>{gweiToEth(o.fees)}</Text></Cell>
+          <Cell>
+            <Text>
+              <DateLozenge value={new Date(o.confirmed).getTime()} />
+            </Text>
+          </Cell>
         </Row>
       )}
     </Table>
@@ -157,21 +172,42 @@ const TransactionToken = ({ list, me }) => {
   </Fragment>;
 };
 
-const RenderTransactions = () => {
+const RenderCoin = () => {
   const config = useConfig() || {};
-  const [transactions] = useState(async () => await fetchTransactions(config));
+  const [data] = useState(async () => await fetchTransactionCoin(config));
 
-  switch (config.type) {
-    case 'storage':
-    case 'wallet':
-    case 'token':
+  switch (data.platform) {
+    case 'btc':
+      return <TransactionBTC list={data.txrefs} me={data.address} />
+    case 'eth':
+      return <TransactionETH list={data.txs} me={data.address} />
     default:
-      return <Text>Macro is not configured.</Text>
-    };
+      return <Text>Unsupported platform to render</Text>;
+  }
 };
 
+const RenderToken = () => {
+  const config = useConfig() || {};
+  const [data] = useState(async () => await fetchTransactionCoin(config));
+
+  return <TransactionToken list={data.txrefs} me={data.address} />
+};
+
+const RenderStrategy = () => {
+  const config = useConfig() || {};
+
+  switch (config.type) {
+    case 'coin':
+      return <RenderCoin />;
+    case 'token':
+      return <RenderToken />;
+    default:
+      return <Text>Macro is not configured.</Text>
+  }
+}
+
 const App = () => {
-  return <RenderTransactions />;
+  return <RenderStrategy />;
 };
 
 export default render(<Macro app={<App />} />);

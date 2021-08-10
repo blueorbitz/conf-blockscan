@@ -14,6 +14,7 @@ import BlockAPI, {
   gweiToEth,
   toReadableFiat,
 } from '../utils/blockchain-api';
+import { parseCoinConfig } from '../utils';
 
 const Description = ({ title, children }) =>
   <Text>
@@ -96,27 +97,12 @@ const RenderCoinBalance = ({ data }) => {
   </Fragment>
 };
 
-const fetchCoinBalance = async (coin, network, address) => {
-  const isEmpty = (str) => str === '' || str == null;
-  if (isEmpty(coin) || isEmpty(network) || isEmpty(address))
-    return { error: 'Incomplete information to query Blockscan!' };
-
-  return await BlockAPI.GetCoinBalance(coin, network, address);
-};
-
 const fetchCoinBalanceFromConfig = async () => {
   const config = useConfig() || {};
-  let param = {};
-
-  if (config.source === 'store' && config.wallet == null)
-    return { error: 'Wallet key not found' };
-  else if (config.source === 'store')
-    param = await storage.get(config.wallet);
-  else
-    param = { ...config }; // Object assign
+  const param = await parseCoinConfig(config);
 
   const { platform, address } = param;
-  const result = await fetchCoinBalance(platform, 'main', address);
+  const result = await BlockAPI.GetCoinBalance(platform, 'main', address);
   const price = await BlockAPI.GetSimplePrice(platform);
   return { ...param, ...result, marketPrice: price.usd || 1 };
 };

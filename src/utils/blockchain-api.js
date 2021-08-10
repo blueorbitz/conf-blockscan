@@ -6,9 +6,12 @@ import { eachRight } from 'lodash';
 export default class BlockchainApi {
   static async GetCoinBalance(coin, network, address) {
     const bcapi = new bcypher(coin, network, process.env.TOKEN);
+    return await bcapi.addressBalance(address, { omitWalletAddresses: true });
+  }
 
-    const addrBal = await bcapi.getAddrBal(address, { omitWalletAddresses: true });
-    return addrBal;
+  static async GetCoinTransaction(coin, network, address) {
+    const bcapi = new bcypher(coin, network, process.env.TOKEN);
+    return await bcapi.addressTransaction(address);
   }
 
   static async GetTokenBalance(platform, c_address, address) {

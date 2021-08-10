@@ -1,5 +1,6 @@
 import { fetch } from '@forge/api';
 import { stringify } from 'query-string';
+import { processError } from '.';
 
 // implementation reference
 
@@ -49,12 +50,4 @@ export default class CoinGecko {
       processError(e);
     }
   }
-}
-
-function processError(e) {
-  console.error(e);
-  if (e.error)
-    return e;
-  else
-    return { error: e.message };
 }
