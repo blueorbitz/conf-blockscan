@@ -15,6 +15,12 @@ export default class EtherScan {
     });
   }
 
+  async tokenTransaction(address) {
+    return await this.request('account', 'tokentx', {
+      address: address,
+    });
+  }
+
   async request(module, action, options) {
     try {
       if (module == null || action == null)

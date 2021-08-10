@@ -24,6 +24,16 @@ export default class BlockchainApi {
     }
   };
 
+  static async GetTokenTransaction(platform, address) {
+    const esapi = new etherscan();
+    switch (platform) {
+      case 'eth':
+        return await esapi.tokenTransaction(address);
+      default:
+        return { error: 'Platform not supported'};
+    }
+  }
+
   static async GetContractInfo(platform, c_address) {
     const cgapi = new coingecko();
     return await cgapi.contractInfo(platform, c_address);
@@ -51,4 +61,10 @@ export function gweiToEth(value) {
 
 export function toReadableFiat(value) {
   return value.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+}
+
+export function normalizeEthAddr(address) {
+  return address.slice(0, 2) === '0x'
+    ? address.slice(2).toLowerCase()
+    : address.toLowerCase();
 }

@@ -15,6 +15,7 @@ import ForgeUI, {
 import BlockAPI, {
   satoshiToBtc,
   gweiToEth,
+  normalizeEthAddr,
 } from '../utils/blockchain-api';
 import { parseCoinConfig } from '../utils';
 
@@ -28,10 +29,29 @@ const fetchTransactionCoin = async () => {
 };
 
 const fetchTransactionsToken = async () => {
+  const config = useConfig() || {};
+  const param = await parseCoinConfig(config);
 
+  const { platform, address } = param;
+  const result = await BlockAPI.GetTokenTransaction(platform, address);
+  return { ...param, ...result };
 };
 
-const TransactionBTC = ({ list, me }) => {
+const FormatETHAddress = ({ address, me, name }) =>
+  <Text>
+    <Link href={'https://etherscan.io/address/' + address}>
+      {(address !== me) ? (address.slice(0, 12) + '...') : name || 'Me'}
+    </Link>
+  </Text>;
+
+const FormatETHTx = ({ tx }) =>
+  <Text>
+    <Link href={'https://etherscan.io/tx/' + tx}>
+      {tx.slice(0, 12) + '...'}
+    </Link>
+  </Text>
+
+const TransactionBTC = ({ list, me, name }) => {
   const reduceList = list.reduce((total, current) => {
     const { tx_hash, tx_input_n, tx_output_n, confirmed } = current;
     const isInput = tx_input_n !== -1;
@@ -86,16 +106,8 @@ const TransactionBTC = ({ list, me }) => {
   </Fragment>
 };
 
-const TransactionETH = ({ list, me }) => {
-  const formettedMe = me.slice(0, 2) === '0x'
-    ? me.slice(2).toLowerCase() : me.toLowerCase();
-
-  const FormatAddress = ({ address }) =>
-    <Text>
-      <Link href={'https://etherscan.io/address/' + address}>
-        {(address !== formettedMe) ? (address.slice(0, 12) + '...') : 'Me'}
-      </Link>
-    </Text>;
+const TransactionETH = ({ list, me, name }) => {
+  const _me = normalizeEthAddr(me);
 
   return <Fragment>
     <Table>
@@ -109,19 +121,13 @@ const TransactionETH = ({ list, me }) => {
       </Head>
       {list.map((o, i) =>
         <Row>
-          <Cell>
-            <Text>
-              <Link href={'https://etherscan.io/tx/' + o.hash}>
-                {o.hash.slice(0, 12) + '...'}
-              </Link>
-            </Text>
-          </Cell>
+          <Cell><FormatETHTx tx={o.hash} /></Cell>
           <Cell>
             <Fragment>
               {o.inputs
                 .map(o => o.addresses)
                 .flat()
-                .map(o => <FormatAddress address={o} />)}
+                .map(o => <FormatETHAddress address={o} me={_me} name={name} />)}
             </Fragment>
           </Cell>
           <Cell>
@@ -129,7 +135,7 @@ const TransactionETH = ({ list, me }) => {
               {o.outputs
                 .map(o => o.addresses)
                 .flat()
-                .map(o => <FormatAddress address={o} />)}
+                .map(o => <FormatETHAddress address={o} me={_me} name={name} />)}
             </Fragment>
           </Cell>
           <Cell><Text>{gweiToEth(o.total)}</Text></Cell>
@@ -145,7 +151,14 @@ const TransactionETH = ({ list, me }) => {
   </Fragment>;
 };
 
-const TransactionToken = ({ list, me }) => {
+const TransactionToken = ({ list, me, name }) => {
+  const _me = normalizeEthAddr(me);
+
+  const formatTotal = (data) => {
+    const total = data.value / Math.pow(10, data.tokenDecimal);
+    return total + ' ' + data.tokenSymbol;
+  }
+
   return <Fragment>
     <Table>
       <Head>
@@ -158,14 +171,28 @@ const TransactionToken = ({ list, me }) => {
       </Head>
       {list.map(o =>
         <Row>
-          <Cell><Text>{o.hash}</Text></Cell>
-          <Cell><Text>{o.from}</Text></Cell>
-          <Cell><Text>{o.to}</Text></Cell>
+          <Cell><FormatETHTx tx={o.hash} /></Cell>
+          <Cell>
+            <FormatETHAddress
+              address={normalizeEthAddr(o.from)}
+              me={_me}
+              name={name}
+            />
+          </Cell>
+          <Cell>
+            <FormatETHAddress
+              address={normalizeEthAddr(o.to)}
+              me={_me}
+              name={name}
+            />
+          </Cell>
           <Cell><Text>{o.tokenName}</Text></Cell>
-          <Cell><Text>{
-            o.value / Math.pow(10, o.decimal) + ' ' + o.tokenSymbol
-          }</Text></Cell>
-          <Cell><Text>{new Date(o.timeStamp)}</Text></Cell>
+          <Cell><Text>{formatTotal(o)}</Text></Cell>
+          <Cell>
+            <Text>
+              <DateLozenge value={parseInt(o.timeStamp * 1000)} />
+            </Text>
+          </Cell>
         </Row>
       )}
     </Table>
@@ -178,9 +205,9 @@ const RenderCoin = () => {
 
   switch (data.platform) {
     case 'btc':
-      return <TransactionBTC list={data.txrefs} me={data.address} />
+      return <TransactionBTC list={data.txrefs} me={data.address} name={data.name} />
     case 'eth':
-      return <TransactionETH list={data.txs} me={data.address} />
+      return <TransactionETH list={data.txs} me={data.address} name={data.name} />
     default:
       return <Text>Unsupported platform to render</Text>;
   }
@@ -188,9 +215,9 @@ const RenderCoin = () => {
 
 const RenderToken = () => {
   const config = useConfig() || {};
-  const [data] = useState(async () => await fetchTransactionCoin(config));
+  const [data] = useState(async () => await fetchTransactionsToken(config));
 
-  return <TransactionToken list={data.txrefs} me={data.address} />
+  return <TransactionToken list={data.result} me={data.address} name={data.name} />
 };
 
 const RenderStrategy = () => {
