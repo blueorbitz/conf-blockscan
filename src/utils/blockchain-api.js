@@ -14,6 +14,11 @@ export default class BlockchainApi {
     return await bcapi.addressTransaction(address);
   }
 
+  static async GetTransactionHash(coin, network, hash) {
+    const bcapi = new bcypher(coin, network, process.env.TOKEN);
+    return await bcapi.transactionHash(hash);
+  }
+
   static async GetTokenBalance(platform, c_address, address) {
     const esapi = new etherscan();
     switch (platform) {

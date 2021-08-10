@@ -47,4 +47,11 @@ export default class Blockcy {
     else
       return await this._get(`/addrs/${address}`, params);
   }
+
+  async transactionHash(hash) {
+    if (isEmpty(hash))
+      return { error: 'Missing required parameter' };
+
+    return await this._get(`/txs/${hash}`);
+  }
 }
