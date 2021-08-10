@@ -12,7 +12,7 @@ resolver.define('get-all', ({ context }) => {
 resolver.define('get-balance', async ({ context }) => {
   const config = useConfig() || defaultConfig;
   try {
-    return await BlockAPI.GetAddressBalance(config.coin, config.network, config.address);
+    return await BlockAPI.GetCoinBalance(config.coin, config.network, config.address);
   } catch(e) {
     console.error(e);
     return null;

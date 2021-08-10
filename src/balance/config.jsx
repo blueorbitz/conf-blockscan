@@ -75,19 +75,20 @@ const InputStrategy = () => {
     const config = useConfig() || {};
     setType(config.type);
     setSource(config.source);
-    console.log('change', config);
   }, []);
 
-  if (type === 'coin' && source === 'store')
-    return <InputCoinStore />;
-  else if (type === 'coin' && source === 'manual')
-    return <InputCoinManual />;
-  else if (type === 'token' && source === 'store')
-    return <InputTokenStore />;
-  else if (type === 'token' && source === 'manual')
-    return <InputTokenManual />;
-  else
+  switch (`${type}-${source}`) {
+    case 'coin-store':
+      return <InputCoinStore />;
+    case 'coin-manual':
+      return <InputCoinManual />;
+    case 'token-store':
+      return <InputTokenStore />;
+    case 'token-manual':
+      return <InputTokenManual />;
+    default:
     return null;
+  }
 };
 
 const Config = () => {

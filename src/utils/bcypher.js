@@ -26,15 +26,19 @@ export default class Blockcy {
       const json = await response.json();
       return json;
     } catch (e) {
-      console.error(e);
-      if (e.error)
-        return e;
-      else
-      return { error: e.message };
+      return processError(e);
     }
   }
 
   async getAddrBal(addr, params = {}) {
     return await this._get('/addrs/' + addr + '/balance', params);
   };
+}
+
+function processError(e) {
+  console.error(e);
+  if (e.error)
+    return e;
+  else
+    return { error: e.message };
 }
