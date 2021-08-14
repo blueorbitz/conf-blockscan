@@ -8,6 +8,8 @@ import ForgeUI, {
   useConfig,
   useState,
   useEffect,
+  CheckboxGroup,
+  Checkbox,
 } from '@forge/ui';
 import { supportedCoins } from '../utils/blockchain-api';
 import * as storage from '../utils/storage';
@@ -87,7 +89,7 @@ const InputStrategy = () => {
     case 'token-manual':
       return <InputTokenManual />;
     default:
-    return null;
+      return null;
   }
 };
 
@@ -103,6 +105,9 @@ const Config = () => {
         <Option label='Manual' value='manual' />
       </Select>
       <InputStrategy />
+      <CheckboxGroup label='Others' name='settings'>
+        <Checkbox label='Show details' value='details' />
+      </CheckboxGroup>
     </Fragment>
   );
 };

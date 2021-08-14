@@ -21,6 +21,7 @@ import {
 
 const RenderBTC = ({ data = {} }) =>
   <Fragment>
+    {data.name && <Description title='Name'>{data.name}</Description>}
     <Description title='Address'>
       <DescriptionLink href={'https://www.blockchain.com/btc/address/' + data.address}>
         {data.address}
@@ -39,6 +40,7 @@ const RenderBTC = ({ data = {} }) =>
 
 const RenderETH = ({ data = {} }) =>
   <Fragment>
+    {data.name && <Description title='Name'>{data.name}</Description>}
     <Description title='Address'>
       <DescriptionLink href={'https://etherscan.io/address/' + data.address}>
         {data.address}
@@ -57,6 +59,7 @@ const RenderETH = ({ data = {} }) =>
 
 const RenderDoge = ({ data = {} }) =>
   <Fragment>
+    {data.name && <Description title='Name'>{data.name}</Description>}
     <Description title='Address'>
       <DescriptionLink href={'https://dogechain.info/address/' + data.address}>
         {data.address}
@@ -74,6 +77,17 @@ const RenderDoge = ({ data = {} }) =>
   </Fragment>;
 
 const RenderCoinBalance = ({ data }) => {
+  const config = useConfig() || {};
+
+  const simple = () => {
+    switch (data.platform) {
+      case 'btc': return <Text>{satoshiToBtc(data.balance || 0)} BTC</Text>;
+      case 'eth': return <Text>{gweiToEth(data.balance || 0)} ETH</Text>;
+      case 'doge': return <Text>{satoshiToBtc(data.balance || 0)} Doge</Text>;
+      default: return <Text>Coin type render not supported</Text>;
+    }
+  }
+
   const content = () => {
     switch (data.platform) {
       case 'btc': return <RenderBTC data={data} />;
@@ -83,10 +97,9 @@ const RenderCoinBalance = ({ data }) => {
     }
   };
 
-  return <Fragment>
-    {data.name && <Text><Strong>Name </Strong>{data.name}</Text>}
-    {content()}
-  </Fragment>
+  return config.settings && config.settings.length === 0
+    ? simple()
+    : content();
 };
 
 const fetchCoinBalanceFromConfig = async () => {
