@@ -5,17 +5,15 @@ import ForgeUI, {
   TextField,
   Select,
   Option,
+  useConfig,
+  useState,
+  useEffect,
 } from '@forge/ui';
-import { supportedCoins } from '../utils/blockchain-api';
+import * as storage from '../utils/storage';
 
 const Config = () => {
   return (
     <Fragment>
-      <Select label='Platform' name='platform'>
-        {supportedCoins.map(coin =>
-          <Option label={coin.name} value={coin.value} />
-        )}
-      </Select>
       <TextField label='Hash' name='hash' />
     </Fragment>
   );

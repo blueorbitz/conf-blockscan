@@ -203,6 +203,9 @@ const RenderCoin = () => {
   const config = useConfig() || {};
   const [data] = useState(async () => await fetchTransactionCoin(config));
 
+  if (data.platform && data && data.error)
+    return <Text>{data.error}</Text>;
+
   switch (data.platform) {
     case 'btc':
       return <TransactionBTC list={data.txrefs} me={data.address} name={data.name} />
@@ -216,6 +219,9 @@ const RenderCoin = () => {
 const RenderToken = () => {
   const config = useConfig() || {};
   const [data] = useState(async () => await fetchTransactionsToken(config));
+
+  if (data && data.error)
+    return <Text>{data.error}</Text>;
 
   return <TransactionToken list={data.result} me={data.address} name={data.name} />
 };

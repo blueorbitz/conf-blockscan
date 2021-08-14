@@ -12,17 +12,9 @@ import BlockAPI, {
   satoshiToBtc,
   gweiToEth,
 } from '../utils/blockchain-api';
-
-const Description = ({ title, children }) =>
-  <Text>
-    <Strong>{`${title} `}</Strong>
-    {children}
-  </Text>;
-
-const DescriptionLink = ({ href, children }) =>
-  <Link href={href} openNewTab={true}>
-    {children}
-  </Link>
+import {
+  Description, DescriptionLink
+} from '../utils/ui';
 
 const RenderBTC = ({ tx }) => {
   return (
@@ -95,6 +87,9 @@ const RenderETH = ({ tx }) => {
 const RenderHash = () => {
   const config = useConfig() || {};
   const [txhash] = useState(async () => await BlockAPI.GetTransactionHash(config.platform, 'main', config.hash));
+
+  if (config.platform && txhash && txhash.error)
+    return <Text>{txhash.error}</Text>;
 
   switch (config.platform) {
     case 'btc':

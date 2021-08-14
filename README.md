@@ -57,6 +57,9 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
   - PS: it is documented in MacroConfig
   - However, error message could be better. Either in console or UI.
   - Stating `MacroConfig` only supprt type, instead of just yellow warning sign.
+- Forge using library that call external API.
+  - have to use `@forge/api` `fetch` only.
+  - possible create a bridge to map eg, axios or request?
 
 ## Reference
 

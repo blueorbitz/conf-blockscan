@@ -1,4 +1,4 @@
-import macro from './coin/macro';
-import config from './coin/config';
+import macro from './block/macro';
+import config from './block/config';
 
 export { macro, config };

@@ -54,4 +54,11 @@ export default class Blockcy {
 
     return await this._get(`/txs/${hash}`);
   }
+  
+  async blockHash(hash) {
+    if (isEmpty(hash))
+      return { error: 'Missing required parameter' };
+
+    return await this._get(`/blocks/${hash}`);
+  }
 }

@@ -15,17 +15,9 @@ import BlockAPI, {
   toReadableFiat,
 } from '../utils/blockchain-api';
 import { parseCoinConfig } from '../utils';
-
-const Description = ({ title, children }) =>
-  <Text>
-    <Strong>{`${title} `}</Strong>
-    {children}
-  </Text>;
-
-const DescriptionLink = ({ href, children }) =>
-  <Link href={href} openNewTab={true}>
-    {children}
-  </Link>
+import {
+  Description, DescriptionLink
+} from '../utils/ui';
 
 const RenderBTC = ({ data = {} }) =>
   <Fragment>

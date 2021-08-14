@@ -6,29 +6,24 @@ modules:
       route: space-configuration
   macro:
     - key: blockscan-balance
-      # include erc20 token balance: https://api.etherscan.io/api?module=account&action=tokenbalance&contractaddress=0x57d90b64a1a57749b0f932f1a3395792e12e7055&address=0xe04f27eb70e025b78871a2ad7eabe85e61212761&tag=latest&apikey=YourApiKeyToken
       title: Blockscan Balance
       description: Balance of a blockchain account
       function: balance-macro
       config:
         function: balance-config
     - key: blockscan-transaction-list
-      # https://api.blockcypher.com/v1/btc/main/addrs/1DEP8i3QJCsomS4BSMY2RpU1upv62aGvhD
-      # https://api.etherscan.io/api?module=account&action=tokentx&address=0x5922b0BBAe5182f2B70609f5dFD08f7DA561F5A4&apikey=DFTPCDC3CQ2RB5V7GZ5SD9HV3C8JRJUDBU
       title: Blockscan Transaction
       description: Transaction information of an account
       function: transaction-list-macro
       config:
         function: balance-config
     - key: blockscan-transaction-hash
-      # https://api.blockcypher.com/v1/btc/main/txs/f854aebae95150b379cc1187d848d58225f3c4157fe992bcd166f58bd5063449
       title: Blockscan Transaction Hash
       description: Information of a transaction
       function: transaction-hash-macro
       config:
         function: transaction-hash-config
     - key: blockscan-block
-      # https://api.blockcypher.com/v1/btc/main/blocks/00000000000000000003dc20b868d17121303308f6bba329302e75913f0790db
       title: Blockscan Block Info
       description: Information about the block
       function: block-macro
@@ -43,6 +38,12 @@ modules:
       function: coin-macro
       config:
         function: coin-config
+    - key: blockscan-coin-conv
+      title: Blockscan Converter
+      description: Convert crypto currency value
+      function: coin-conv-macro
+      config:
+        function: coin-conv-config
   function:
     - key: space
       handler: space.handler
@@ -66,6 +67,10 @@ modules:
       handler: coin.macro
     - key: coin-config
       handler: coin.config
+    - key: coin-conv-macro
+      handler: coin.convMacro
+    - key: coin-conv-config
+      handler: coin.convConfig
 app:
   id: ari:cloud:ecosystem::app/432fed33-28ea-4214-8f6c-8f5ddacc0435
   name: conf-blockscan
