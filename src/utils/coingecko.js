@@ -10,7 +10,7 @@ export default class CoinGecko {
   async contractInfo(platform, c_address) {
     if (platform === 'eth')
       platform = 'ethereum';
-    
+
     const query = {
       localization: false,
       tickers: false,
@@ -36,6 +36,13 @@ export default class CoinGecko {
       vs_currencies: 'usd',
     });
     return result[platform];
+  }
+
+  async coinHistory(id, date) {
+    return await this.request(`/coins/${id}/history`, {
+      date,
+      localization: 'false',
+    });
   }
 
   async request(url, query = {}) {

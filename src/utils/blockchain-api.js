@@ -30,7 +30,7 @@ export default class BlockchainApi {
       case 'eth':
         return await esapi.tokenBalance(c_address, address);
       default:
-        return { error: 'Platform not supported'};
+        return { error: 'Platform not supported' };
     }
   };
 
@@ -40,7 +40,7 @@ export default class BlockchainApi {
       case 'eth':
         return await esapi.tokenTransaction(address);
       default:
-        return { error: 'Platform not supported'};
+        return { error: 'Platform not supported' };
     }
   }
 
@@ -52,6 +52,11 @@ export default class BlockchainApi {
   static async GetSimplePrice(platform) {
     const cgapi = new coingecko();
     return await cgapi.simplePrice(platform);
+  }
+
+  static async GetCoinHistory(coin, date) {
+    const cgapi = new coingecko();
+    return await cgapi.coinHistory(coin, date);
   }
 }
 
@@ -78,3 +83,15 @@ export function normalizeEthAddr(address) {
     ? address.slice(2).toLowerCase()
     : address.toLowerCase();
 }
+
+export const converterList = [
+  { id: 'ethereum', symbol: 'eth', name: 'Ethereum' },
+  { id: 'bitcoin', symbol: 'btc', name: 'Bitcoin' },
+  { id: 'bitcoin-cash', symbol: 'bch', name: 'Bitcoin Cash' },
+  { id: 'dogecoin', symbol: 'doge', name: 'Dogecoin' },
+  { id: 'cardano', symbol: 'ada', name: 'Cardano' },
+  { id: 'binancecoin', symbol: 'bnb', name: 'Binance Coin' },
+  { id: 'tether', symbol: 'usdt', name: 'Tether' },
+  { id: 'litecoin', symbol: 'ltc', name: 'Litecoin' },
+  { id: 'ripple', symbol: 'xrp', name: 'XRP' },
+];
