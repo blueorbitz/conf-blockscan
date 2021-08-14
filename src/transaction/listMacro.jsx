@@ -86,25 +86,33 @@ const TransactionBTC = ({ list, me, name }) => {
       </Head>
       {reduceList.map(o =>
         <Row>
-          <Cell>
-            <Text>
-              <Link href={'https://www.blockchain.com/btc/tx/' + o.tx_hash}>
-                {o.tx_hash.slice(0, 20) + '...'}
-              </Link>
-            </Text>
-          </Cell>
+          <Cell><Text><Link href={'https://www.blockchain.com/btc/tx/' + o.tx_hash}>
+            {o.tx_hash.slice(0, 20) + '...'}
+          </Link></Text></Cell>
           <Cell><Text>{getValue(o.input)}</Text></Cell>
           <Cell><Text>{getValue(o.output)}</Text></Cell>
-          <Cell>
-            <Text>
-              <DateLozenge value={new Date(o.confirmed).getTime()} />
-            </Text>
-          </Cell>
+          <Cell><Text><DateLozenge value={new Date(o.confirmed).getTime()} /></Text></Cell>
         </Row>
       )}
     </Table>
   </Fragment>
 };
+
+const TransactionBTCSimple = ({ list }) =>
+  <Fragment>
+    <Table rowsPerPage='10'>
+      <Head>
+        <Cell><Text>Timestamp</Text></Cell>
+        <Cell><Text>Tx Hash</Text></Cell>
+      </Head>
+      {list.map(o => <Row>
+        <Cell><Text><DateLozenge value={new Date(o.confirmed).getTime()} /></Text></Cell>
+        <Cell><Text><Link href={'https://www.blockchain.com/btc/tx/' + o.tx_hash}>
+          {o.tx_hash}
+        </Link></Text></Cell>
+      </Row>)}
+    </Table>
+  </Fragment>;
 
 const TransactionETH = ({ list, me, name }) => {
   const _me = normalizeEthAddr(me);
@@ -150,6 +158,22 @@ const TransactionETH = ({ list, me, name }) => {
     </Table>
   </Fragment>;
 };
+
+const TransactionETHSimple = ({ list }) =>
+  <Fragment>
+    <Table rowsPerPage='10'>
+      <Head>
+        <Cell><Text>Timestamp</Text></Cell>
+        <Cell><Text>Tx Hash</Text></Cell>
+      </Head>
+      {list.map(o => <Row>
+        <Cell><Text><DateLozenge value={new Date(o.confirmed).getTime()} /></Text></Cell>
+        <Cell><Text><Link href={'https://etherscan.io/tx/' + o.hash}>
+          {o.hash}
+        </Link></Text></Cell>
+      </Row>)}
+    </Table>
+  </Fragment>;
 
 const TransactionToken = ({ list, me, name }) => {
   const _me = normalizeEthAddr(me);
@@ -199,6 +223,23 @@ const TransactionToken = ({ list, me, name }) => {
   </Fragment>;
 };
 
+const TransactionTokenSimple = ({ list = [] }) => {
+  return <Fragment>
+    <Table rowsPerPage='10'>
+      <Head>
+        <Cell><Text>Timestamp</Text></Cell>
+        <Cell><Text>Tx Hash</Text></Cell>
+      </Head>
+      {/* {list.map(o => <Row>
+        <Cell><Text><DateLozenge value={parseInt(o.timeStamp * 1000)} /></Text></Cell>
+        <Cell><Text><Link href={'https://etherscan.io/tx/' + o.hash}>
+          {o.hash}
+        </Link></Text></Cell>
+      </Row>)} */}
+    </Table>
+  </Fragment>;
+}
+
 const RenderCoin = () => {
   const config = useConfig() || {};
   const [data] = useState(async () => await fetchTransactionCoin(config));
@@ -206,24 +247,45 @@ const RenderCoin = () => {
   if (data.platform && data && data.error)
     return <Text>{data.error}</Text>;
 
-  switch (data.platform) {
-    case 'btc':
-      return <TransactionBTC list={data.txrefs} me={data.address} name={data.name} />
-    case 'eth':
-      return <TransactionETH list={data.txs} me={data.address} name={data.name} />
-    default:
-      return <Text>Unsupported platform to render</Text>;
+  const detailed = () => {
+    switch (data.platform) {
+      case 'btc':
+        return <TransactionBTC list={data.txrefs} me={data.address} name={data.name} />
+      case 'eth':
+        return <TransactionETH list={data.txs} me={data.address} name={data.name} />
+      default:
+        return <Text>Unsupported platform to render</Text>;
+    }
+  };
+  const simple = () => {
+    switch (data.platform) {
+      case 'btc':
+        return <TransactionBTCSimple list={data.txrefs} />
+      case 'eth':
+        return <TransactionETHSimple list={data.txs} />
+      default:
+        return <Text>Unsupported platform to render</Text>;
+    }
   }
+
+  return config.settings && config.settings.length === 0
+    ? simple()
+    : detailed();
 };
 
 const RenderToken = () => {
   const config = useConfig() || {};
   const [data] = useState(async () => await fetchTransactionsToken(config));
 
-  if (data && data.error)
+  if (data.platform && data && data.error)
     return <Text>{data.error}</Text>;
 
-  return <TransactionToken list={data.result} me={data.address} name={data.name} />
+  const simple = () => <TransactionTokenSimple list={data.result} />;
+  const detailed = () => <TransactionToken list={data.result} me={data.address} name={data.name} />;
+
+  return config.settings && config.settings.length === 0
+    ? simple()
+    : detailed();
 };
 
 const RenderStrategy = () => {
