@@ -88,7 +88,7 @@ const RenderHash = () => {
   const config = useConfig() || {};
   const [txhash] = useState(async () => await BlockAPI.GetTransactionHash(config.platform, 'main', config.hash));
 
-  if (config.platform && txhash && txhash.error)
+  if (txhash && txhash.error)
     return <Text>{txhash.error}</Text>;
 
   switch (config.platform) {

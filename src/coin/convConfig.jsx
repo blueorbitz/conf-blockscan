@@ -9,6 +9,8 @@ import ForgeUI, {
   useEffect,
   useConfig,
   TextField,
+  CheckboxGroup,
+  Checkbox,
 } from '@forge/ui';
 import BlockAPI, {
   converterList
@@ -22,7 +24,7 @@ const Config = () => {
       return;
 
     let date = config.date;
-    if (date === '')
+    if (date == null || date === '')
       date = new Date().toISOString().split('T')[0];
 
     const newdate = date.split('-').reverse().join('-');
@@ -48,6 +50,9 @@ const Config = () => {
         // defaultValue={new Date().toISOString().split('T')[0]}
       />
       <TextField label='Value' name='value' />
+      <CheckboxGroup label='Others' name='settings'>
+        <Checkbox label='Compare against today price' value='compare' />
+      </CheckboxGroup>
     </Fragment>
   );
 };

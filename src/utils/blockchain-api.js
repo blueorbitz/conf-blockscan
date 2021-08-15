@@ -79,6 +79,9 @@ export function toReadableFiat(value) {
 }
 
 export function normalizeEthAddr(address) {
+  if (address == null)
+    return '';
+
   return address.slice(0, 2) === '0x'
     ? address.slice(2).toLowerCase()
     : address.toLowerCase();

@@ -230,12 +230,12 @@ const TransactionTokenSimple = ({ list = [] }) => {
         <Cell><Text>Timestamp</Text></Cell>
         <Cell><Text>Tx Hash</Text></Cell>
       </Head>
-      {/* {list.map(o => <Row>
+      {list.map(o => <Row>
         <Cell><Text><DateLozenge value={parseInt(o.timeStamp * 1000)} /></Text></Cell>
         <Cell><Text><Link href={'https://etherscan.io/tx/' + o.hash}>
           {o.hash}
         </Link></Text></Cell>
-      </Row>)} */}
+      </Row>)}
     </Table>
   </Fragment>;
 }
@@ -244,7 +244,7 @@ const RenderCoin = () => {
   const config = useConfig() || {};
   const [data] = useState(async () => await fetchTransactionCoin(config));
 
-  if (data.platform && data && data.error)
+  if (data && data.error)
     return <Text>{data.error}</Text>;
 
   const detailed = () => {
@@ -275,9 +275,9 @@ const RenderCoin = () => {
 
 const RenderToken = () => {
   const config = useConfig() || {};
-  const [data] = useState(async () => await fetchTransactionsToken(config));
+  const [data] = useState(async () => await fetchTransactionsToken(config), {});
 
-  if (data.platform && data && data.error)
+  if (data && data.error)
     return <Text>{data.error}</Text>;
 
   const simple = () => <TransactionTokenSimple list={data.result} />;

@@ -39,6 +39,9 @@ export default class CoinGecko {
   }
 
   async coinHistory(id, date) {
+    if (id == null)
+      return { error: 'Coin id not specified' };
+
     return await this.request(`/coins/${id}/history`, {
       date,
       localization: 'false',

@@ -60,6 +60,7 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
 - Forge using library that call external API.
   - have to use `@forge/api` `fetch` only.
   - possible create a bridge to map eg, axios or request?
+- Caching fetch (CDN) to improve static loading performance.
 
 ## Reference
 
