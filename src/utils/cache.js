@@ -6,7 +6,8 @@ const KEY_LIMIT = 100; // from Atlassian document for storage
 const VALUE_LIMIT = 32000; // from Atlassian document for storage
 const EXPIRE_CACHE = 30 * 60 * 1000; // 30 minute expire
 
-const buildKey = (id, key) => `C#${id}#${md5(key)}`;
+export const buildKey = (id, key) => `C#${id}#${md5(key)}`;
+
 const byteSize = (obj) => new TextEncoder().encode(JSON.stringify(obj)).length;
 
 export default class CacheRequest {
@@ -21,15 +22,14 @@ export default class CacheRequest {
   
   async addCache(url, query, response) {
     const { cacheWithQuery, id, doNotCache } = this;
-    const urlr = `${url}?${stringify(query)}`;
 
     if (doNotCache)
       return;
+    
+    const urlKey = cacheWithQuery ? `${url}?${stringify(query)}` : url;
+    await add(id, urlKey, response);
 
-    if (cacheWithQuery)
-      await add(id, urlr, response);
-    else
-      await add(id, url, response);
+    console.log('addCache', buildKey(id, urlKey), urlKey);
   }
 
   async getCache(url, query) {
@@ -44,7 +44,11 @@ export default class CacheRequest {
     if (invalid)
       return false;
 
-    return await get(id, urlKey);
+    const obj = await get(id, urlKey);
+    if (obj !== false)
+      console.log('getCache', buildKey(id, urlKey), urlKey);
+
+    return obj;
   }
 }
 
@@ -55,14 +59,12 @@ async function add(id, key, value) {
   if (byteSize(storeKey) > KEY_LIMIT || byteSize(storeValue) > VALUE_LIMIT)
     return false;
 
-  console.log('add', storeKey);
   await storage.set(storeKey, storeValue);
   return true;
 }
 
 async function get(id, key) {
   const storeKey = buildKey(id, key);
-  console.log('get cache', storeKey);
   if (byteSize(storeKey) > KEY_LIMIT)
     return false;
 

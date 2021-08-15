@@ -35,10 +35,8 @@ export default class EtherScan extends CacheRequest {
       const param = { module, action, ...options, apikey };
       
       const cacheRes = await this.getCache(action, options);
-      if (cacheRes !== false) {
-        console.log('etherscan cache:', action);
+      if (cacheRes !== false)
         return cacheRes;
-      }
 
       const urlr = `${URL_ROOT}?${stringify(param)}`;
       console.log('etherscan:', urlr);

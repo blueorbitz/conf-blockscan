@@ -57,10 +57,8 @@ export default class CoinGecko extends CacheRequest {
   async request(url, query = {}) {
     try {
       const cacheRes = await this.getCache(url, query);
-      if (cacheRes !== false) {
-        console.log('coingecko cache:', url);
+      if (cacheRes !== false)
         return cacheRes;
-      }
 
       const urlr = `${URL_ROOT}${url}?${stringify(query)}`;
       console.log('coingecko:', urlr);

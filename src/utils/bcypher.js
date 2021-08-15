@@ -26,10 +26,8 @@ export default class Blockcy extends CacheRequest {
       const _params = Object.assign({}, params, { token: this.token });
 
       const cacheRes = await this.getCache(path, params);
-      if (cacheRes !== false) {
-        console.log('bcypher cache:', path);
+      if (cacheRes !== false)
         return cacheRes;
-      }
 
       console.log('blockcy _get:', urlr);
 
