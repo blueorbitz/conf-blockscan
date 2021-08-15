@@ -21,3 +21,14 @@ export async function parseCoinConfig(config) {
 
   return { ...config, ...param };
 }
+
+export function buildRestOutput(body = '', statusCode = 200, statusText = 'OK') {
+  return {
+    body,
+    headers: {
+      'Content-Type': ['application/json'],
+    },
+    statusCode,
+    statusText,
+  };
+}

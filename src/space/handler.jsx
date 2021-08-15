@@ -16,9 +16,11 @@ import ForgeUI, {
   TextField,
   useState,
   useEffect,
+  Strong,
 } from '@forge/ui';
 import { supportedCoins } from '../utils/blockchain-api';
 import * as storage from '../utils/storage';
+import { webTrigger } from '@forge/api';
 
 const ConfirmDeleteModal = ({ wallet, onClose }) => {
   return (
@@ -123,6 +125,9 @@ const App = () => {
   const [isReload, setReload] = useState(true);
   const [storageList, setStorageList] = useState([]);
 
+  const [triggerWatch] = useState(async () => await webTrigger.getUrl('test-watch'));
+  const [triggerClean] = useState(async () => await webTrigger.getUrl('test-clean'))
+
   useEffect(async () => {
     if (isReload === false)
       return;
@@ -153,6 +158,9 @@ const App = () => {
         }}
         onClose={() => setContractOpen(false)}
       />}
+      <Text>&nbsp;</Text>
+      <Text><Strong>Watch Url </Strong>{triggerWatch}</Text>
+      <Text><Strong>Clean Url </Strong>{triggerClean}</Text>
     </Fragment>
   );
 };

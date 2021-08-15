@@ -23,27 +23,39 @@ modules:
       function: transaction-hash-macro
       config:
         function: transaction-hash-config
-    - key: blockscan-block
-      title: Blockscan Block Info
-      description: Information about the block
-      function: block-macro
-      config:
-        function: block-config
-    - key: blockscan-coin-info
-      # coin id: api.coingecko.com/api/v3/coins/million
-      # list of asset: api.coingecko.com/api/v3/asset_platforms
-      # asset -> contract: api.coingecko.com/api/v3/coins/ethereum/contract/0x6B4c7A5e3f0B99FCD83e9c089BDDD6c7FCe5c611
-      title: Blockscan Coin Detail
-      description: Information about a coin or token
-      function: coin-macro
-      config:
-        function: coin-config
+    # - key: blockscan-block
+    #   title: Blockscan Block Info
+    #   description: Information about the block
+    #   function: block-macro
+    #   config:
+    #     function: block-config
+    # - key: blockscan-coin-info
+    #   # coin id: api.coingecko.com/api/v3/coins/million
+    #   # list of asset: api.coingecko.com/api/v3/asset_platforms
+    #   # asset -> contract: api.coingecko.com/api/v3/coins/ethereum/contract/0x6B4c7A5e3f0B99FCD83e9c089BDDD6c7FCe5c611
+    #   title: Blockscan Coin Detail
+    #   description: Information about a coin or token
+    #   function: coin-macro
+    #   config:
+    #     function: coin-config
     - key: blockscan-coin-conv
       title: Blockscan Converter
       description: Convert crypto currency value
       function: coin-conv-macro
       config:
         function: coin-conv-config
+  scheduledTrigger:
+    - key: blockscan-watch
+      function: schedule-watch
+      interval: hour
+    - key: blockscan-clean
+      function: schedule-clean
+      interval: day
+  webtrigger:
+    - key: test-watch
+      function: schedule-watch
+    - key: test-clean
+      function: schedule-clean
   function:
     - key: space
       handler: space.handler
@@ -71,6 +83,10 @@ modules:
       handler: coin.convMacro
     - key: coin-conv-config
       handler: coin.convConfig
+    - key: schedule-watch
+      handler: schedule.watch
+    - key: schedule-clean
+      handler: schedule.clean
 app:
   id: ari:cloud:ecosystem::app/432fed33-28ea-4214-8f6c-8f5ddacc0435
   name: conf-blockscan
@@ -86,10 +102,9 @@ permissions:
   external:
     fetch:
       backend:
-        - '*'
-        # - 'api.blockcypher.com'
-        # - 'api.etherscan.io'
-        # - 'api.coingecko.com'
+        - 'api.blockcypher.com'
+        - 'api.etherscan.io'
+        - 'api.coingecko.com'
 resources:
   - key: balance-spa
     path: static/spa/build
