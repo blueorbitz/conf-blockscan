@@ -1,12 +1,17 @@
 import { fetch } from '@forge/api';
 import { stringify } from 'query-string';
 import { processError } from '.';
+import CacheRequest from './cache';
 
 // implementation reference
 
 const URL_ROOT = 'https://api.coingecko.com/api/v3';
 
-export default class CoinGecko {
+export default class CoinGecko extends CacheRequest {
+  constructor() {
+    super('CG')
+  }
+
   async contractInfo(platform, c_address) {
     if (platform === 'eth')
       platform = 'ethereum';
@@ -20,6 +25,7 @@ export default class CoinGecko {
       sparkline: false,
     };
 
+    this.cacheWithQuery = false;
     return await this.request(`/coins/${platform}/contract/${c_address}`, query);
   }
 
@@ -50,11 +56,20 @@ export default class CoinGecko {
 
   async request(url, query = {}) {
     try {
+      const cacheRes = await this.getCache(url, query);
+      if (cacheRes !== false) {
+        console.log('coingecko cache:', url);
+        return cacheRes;
+      }
+
       const urlr = `${URL_ROOT}${url}?${stringify(query)}`;
       console.log('coingecko:', urlr);
 
       const response = await fetch(urlr);
       const json = await response.json();
+
+      this.addCache(url, query, json);
+
       return json;
     } catch (e) {
       processError(e);
