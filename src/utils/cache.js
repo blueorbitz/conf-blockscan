@@ -4,7 +4,7 @@ import { storage, startsWith } from '@forge/api';
 
 const KEY_LIMIT = 100; // from Atlassian document for storage
 const VALUE_LIMIT = 32000; // from Atlassian document for storage
-const EXPIRE_CACHE = 5 * 60 * 1000; // 5 minute expire
+const EXPIRE_CACHE = 30 * 60 * 1000; // 30 minute expire
 
 const buildKey = (id, key) => `C#${id}#${md5(key)}`;
 const byteSize = (obj) => new TextEncoder().encode(JSON.stringify(obj)).length;
@@ -84,10 +84,13 @@ async function invalidCache(id, key) {
   return true;
 }
 
-export async function removedExpired() {
-  const results = await storage.query()
+export async function retrieveCache(cursor) {
+  let query = storage.query()
     .where('key', startsWith('C#'))
-    .limit(20)
-    // .cursor('...')
-    .getMany();
+    .limit(10);
+
+  if (cursor)
+    query = query.cursor(cursor);
+
+  return await query.getMany();
 }
