@@ -1,16 +1,12 @@
 import ForgeUI, {
   render,
   Macro,
-  Text,
+  Text, Link, DateLozenge,
+  Fragment,
+  Table, Head, Row, Cell,
+  Tag,
   useConfig,
   useState,
-  Fragment,
-  Table,
-  Head,
-  Row,
-  Cell,
-  Link,
-  DateLozenge,
 } from '@forge/ui';
 import BlockAPI, {
   satoshiToBtc,

@@ -61,6 +61,9 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
   - have to use `@forge/api` `fetch` only.
   - possible create a bridge to map eg, axios or request?
 - Caching fetch (CDN) to improve static loading performance.
+- Storage no bulk delete.
+  - trying to access 'deleteAppStoreEntity' too often.
+  - proper guideline and useage of storage
 
 ## Reference
 

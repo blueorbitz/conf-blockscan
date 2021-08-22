@@ -94,8 +94,9 @@ app:
     snapshots: false
 permissions:
   scopes:
-    # - read:confluence-content.summary
     - storage:app
+    - write:confluence-content
+    - read:confluence-content.summary
   content:
     styles:
       - 'unsafe-inline'
