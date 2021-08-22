@@ -3,8 +3,6 @@ import ForgeUI, {
   Fragment,
   Macro,
   Text,
-  Strong,
-  Link,
   useConfig,
   useState,
 } from '@forge/ui';

@@ -49,12 +49,14 @@ export default class Blockcy extends CacheRequest {
     return await this._get('/addrs/' + address + '/balance', params);
   };
 
-  async addressTransaction(address, params = {}) {
+  async addressTransaction(address, params = {}, mode) {
     if (isEmpty(address))
       return { error: 'Missing required parameter' };
 
-    if (this.coin === 'eth')
+    if (this.coin === 'eth' && mode === 'eth-full')
       return await this._get(`/addrs/${address}/full`, params);
+    else if (this.coin === 'eth')
+      return await this._get(`/addrs/${address}`, params);
     else
       return await this._get(`/addrs/${address}`, params);
   }

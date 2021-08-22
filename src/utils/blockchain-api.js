@@ -11,7 +11,12 @@ export default class BlockchainApi {
 
   static async GetCoinTransaction(coin, network, address) {
     const bcapi = new bcypher(coin, network, process.env.TOKEN);
-    return await bcapi.addressTransaction(address);
+    return await bcapi.addressTransaction(address, {}, 'eth-full');
+  }
+  
+  static async GetCoinTransactionLite(coin, network, address) {
+    const bcapi = new bcypher(coin, network, process.env.TOKEN);
+    return await bcapi.addressTransaction(address, { limit: 2 }, 'lite');
   }
 
   static async GetTransactionHash(coin, network, hash) {

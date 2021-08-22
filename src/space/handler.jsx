@@ -17,6 +17,8 @@ import ForgeUI, {
   useState,
   useEffect,
   Strong,
+  CheckboxGroup,
+  Checkbox,
 } from '@forge/ui';
 import { supportedCoins } from '../utils/blockchain-api';
 import * as storage from '../utils/storage';
@@ -29,7 +31,6 @@ const ConfirmDeleteModal = ({ wallet, onClose }) => {
       header={`Confirm Delete "${wallet.name}"?`}
       onClose={onClose}>
       <Form onSubmit={async () => {
-        console.log('submit');
         await storage.removeWallet(wallet);
         onClose();
       }} />
@@ -37,8 +38,29 @@ const ConfirmDeleteModal = ({ wallet, onClose }) => {
   );
 };
 
+const EditWalletModal = ({ onSubmit, onClose, data}) => {
+  return (
+    <ModalDialog header="Edit Wallet" onClose={onClose}>
+      <Form onSubmit={onSubmit}>
+        <TextField label='Wallet Name' name='name' defaultValue={data.name} />
+        <Select label='Platform' name='platform'>
+          {supportedCoins.map(coin => coin.value === data.platform
+            ? <Option label={coin.name} value={coin.value} defaultSelected />
+            : <Option label={coin.name} value={coin.value} />
+          )}
+        </Select>
+        <TextField label='Wallet Address' name='address' defaultValue={data.address} />
+        <CheckboxGroup label='Others' name='settings'>
+          <Checkbox label='Watch transaction' value='watch' defaultChecked={data.settings.indexOf('watch') !== -1}/>
+        </CheckboxGroup>
+      </Form>
+    </ModalDialog>
+  );
+};
+
 const WalletTable = ({ list, reload }) => {
   const [isOpen, setOpen] = useState(false);
+  const [edit, setEdit] = useState(false);
   const [deleteWallet, setDeleteWallet] = useState(null);
 
   return (
@@ -67,7 +89,10 @@ const WalletTable = ({ list, reload }) => {
             <Cell>
               <ButtonSet>
                 <Button text='' icon='edit' onClick={async () => {
-                  console.log('edit', issue.key)
+                  if (wallet.type === 'wallet')
+                    setEdit(wallet);
+                  else
+                    console.log('edit contract', wallet.key)
                 }} />
                 <Button text='' icon='trash' onClick={async () => {
                   setDeleteWallet(wallet);
@@ -85,6 +110,15 @@ const WalletTable = ({ list, reload }) => {
           setOpen(false);
         }}
       />}
+      {edit && <EditWalletModal
+        data={edit}
+        onSubmit={async form => {
+          await storage.editWallet({ ...edit, ...form });
+          reload(true);
+          setEdit(false);
+        }}
+        onClose={() => setEdit(false)}
+      />}
     </Fragment>
   );
 };
@@ -100,10 +134,13 @@ const AddWalletModal = (props) => {
           }
         </Select>
         <TextField label='Wallet Address' name='address' />
+        <CheckboxGroup label='Others' name='settings'>
+          <Checkbox label='Watch transaction' value='watch' />
+        </CheckboxGroup>
       </Form>
     </ModalDialog>
   );
-}
+};
 
 const AddContractModal = (props) => {
   return (
@@ -117,7 +154,7 @@ const AddContractModal = (props) => {
       </Form>
     </ModalDialog>
   );
-}
+};
 
 const App = () => {
   const [isWalletOpen, setWalletOpen] = useState(false);
@@ -144,7 +181,7 @@ const App = () => {
       <Button text='Add Contract' icon='editor-add' onClick={() => setContractOpen(true)} />
       {isWalletOpen && <AddWalletModal
         onSubmit={async form => {
-          storage.addWallet({ type: 'wallet', ...form });
+          await storage.addWallet({ type: 'wallet', ...form });
           setReload(true);
           setWalletOpen(false);
         }}
@@ -152,7 +189,7 @@ const App = () => {
       />}
       {isContractOpen && <AddContractModal
         onSubmit={async form => {
-          storage.addWallet({ type: 'contract', ...form });
+          await storage.addWallet({ type: 'contract', ...form });
           setReload(true);
           setContractOpen(false);
         }}

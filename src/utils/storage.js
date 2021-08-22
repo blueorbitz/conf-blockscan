@@ -5,10 +5,10 @@ export async function addWallet(wallet) {
   const context = useProductContext();
   const spaceKey = context.spaceKey;
   const timestamp = new Date().getTime();
-  const { type, name, platform, address } = wallet;
+  const { type, name, platform, address, settings } = wallet;
 
   const key = `W#${spaceKey}#${type}#${platform}#${timestamp}`;
-  return await storage.set(key, { key, type, name, platform, address, timestamp, spaceKey });
+  return await storage.set(key, { key, type, name, platform, address, settings, timestamp, spaceKey });
 }
 
 export async function editWallet(wallet) {
@@ -33,12 +33,12 @@ export async function getAllWHash() {
   return results.results;
 }
 
-export async function getWallets() {
+export async function getWallets(search) {
   const context = useProductContext();
   const spaceKey = context.spaceKey;
 
   const results = await storage.query()
-    .where('key', startsWith(`W#${spaceKey}#wallet`))
+    .where('key', startsWith(search || `W#${spaceKey}#wallet`))
     .limit(20)
     .getMany();
   
@@ -55,4 +55,12 @@ export async function getContracts() {
     .getMany();
   
   return results.results;
+}
+
+export async function getLastTransaction(walletKey) {
+  return await storage.get(`TX#${walletKey}`);
+}
+
+export async function updateLastTransaction(walletKey, value) {
+  return await storage.set(`TX#${walletKey}`, value);
 }

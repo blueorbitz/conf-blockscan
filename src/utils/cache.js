@@ -27,9 +27,10 @@ export default class CacheRequest {
       return;
     
     const urlKey = cacheWithQuery ? `${url}?${stringify(query)}` : url;
-    await add(id, urlKey, response);
+    const flag = await add(id, urlKey, response);
 
-    console.log('addCache', buildKey(id, urlKey), urlKey);
+    if (flag)
+      console.log('addCache', buildKey(id, urlKey), urlKey);
   }
 
   async getCache(url, query) {
