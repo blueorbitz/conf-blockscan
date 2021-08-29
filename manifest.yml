@@ -89,6 +89,8 @@ permissions:
   external:
     fetch:
       backend:
+        - 'etherscan.io'
+        - 'api.opensea.io'
         - 'api.blockcypher.com'
         - 'api.etherscan.io'
         - 'api.coingecko.com'

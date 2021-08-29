@@ -1,58 +1,41 @@
 import ForgeUI, {
   render,
   Macro,
-  Text,
-  useConfig,
+  Image,
+  Fragment,
+  Heading,
+  TagGroup, Tag,
   useState,
-  Badge,
+  useConfig,
 } from '@forge/ui';
-import BlockAPI, {
-  toReadableFiat,
-} from '../utils/blockchain-api';
-
-const compute = (value, price) => toReadableFiat((value * price));
-
-const extractPrice = (data) => {
-  const config = useConfig() || {};
-  return data.market_data.current_price[config.to];
-};
-
-const badgeAppearance = (dispVal, todayVal) => dispVal < todayVal ? 'removed' : 'added';
-const badgeText = (dispVal, todayVal) => ((dispVal - todayVal) / dispVal * 100).toFixed(1) + ' %';
+import BlockAPI from '../utils/blockchain-api';
 
 const App = () => {
-  const config = useConfig() || {};
+  const config = useConfig();
+  const [image] = useState(async () => {
+    if (config == null || config.contract == null || config.tokenId == null)
+      return {};
 
-  let date = config.date;
-  if (date == null || date === '')
-    date = new Date().toISOString().split('T')[0];
-  const newdate = date.split('-').reverse().join('-');
+    const response = await BlockAPI.GetNFTAsset(config.contract, config.tokenId);
+    return response;
+  }, {});
 
-  const [query] = useState(async () => await BlockAPI.GetCoinHistory(config.from, newdate));
-  const [latest] = useState(async () => {
-    if (config.settings == null || config.settings.indexOf('compare') === -1)
-      return null;
-      
-    const today = new Date()
-      .toISOString().split('T')[0] // token date only
-      .split('-').reverse().join('-'); // flip date and year position;
-    return await BlockAPI.GetCoinHistory(config.from, today);
-  });
+  if (config == null || config.contract == null || config.tokenId == null)
+    return null;
 
-  if (query == null || config.to == null)
-    return <Text>Please configure the macro</Text>;
-  
-  else if (query.error)
-    return <Text>{query.error}</Text>;
+  if (config.settings == null || config.settings.indexOf('info') === -1)
+    return <Image src={image.image_url} alt={image.name} size={config.size} />
 
   else
-    return <Text>
-      {compute(config.value, extractPrice(query)) + ' ' + config.to.toUpperCase()}
-      {latest && <Badge 
-        appearance={badgeAppearance(extractPrice(query), extractPrice(latest))}
-        text={badgeText(extractPrice(query), extractPrice(latest))}
-      />}
-    </Text>
+    return <Fragment>
+      <Heading size="medium">{image.name}</Heading>
+      <Image src={image.image_url} alt={image.name} size={config.size} />
+      <TagGroup>
+        {image.traits.map(o =>
+          <Tag text={`${o.trait_type}: ${o.value}`} />
+        )}
+    </TagGroup>
+    </Fragment>
 };
 
 export default render(<Macro app={<App />} />);

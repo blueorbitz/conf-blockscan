@@ -64,6 +64,8 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
 - Storage no bulk delete.
   - trying to access 'deleteAppStoreEntity' too often.
   - proper guideline and useage of storage
+- TextField Type, eg. password, or regex protection
+- Confluence macro native editing
 
 ## Reference
 

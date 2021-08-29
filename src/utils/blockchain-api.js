@@ -1,6 +1,7 @@
 import bcypher from './bcypher';
 import etherscan from './etherscan';
 import coingecko from './coingecko';
+import opensea from './opensea';
 import { eachRight } from 'lodash';
 
 export default class BlockchainApi {
@@ -62,6 +63,11 @@ export default class BlockchainApi {
   static async GetCoinHistory(coin, date) {
     const cgapi = new coingecko();
     return await cgapi.coinHistory(coin, date);
+  }
+
+  static async GetNFTAsset(contract, tokenId) {
+    const osapi = new opensea();
+    return await osapi.singleAsset(contract, tokenId);
   }
 }
 
