@@ -73,7 +73,7 @@ const TransactionBTC = ({ list, me, name }) => {
     .join('\n');
 
   return <Fragment>
-    <Table>
+    <Table rowsPerPage='10'>
       <Head>
         <Cell><Text>Tx Hash</Text></Cell>
         <Cell><Text>Value[In]</Text></Cell>
@@ -114,7 +114,7 @@ const TransactionETH = ({ list, me, name }) => {
   const _me = normalizeEthAddr(me);
 
   return <Fragment>
-    <Table>
+    <Table rowsPerPage='10'>
       <Head>
         <Cell><Text>Tx Hash</Text></Cell>
         <Cell><Text>From</Text></Cell>
@@ -180,7 +180,7 @@ const TransactionToken = ({ list, me, name }) => {
   }
 
   return <Fragment>
-    <Table>
+    <Table rowsPerPage='10'>
       <Head>
         <Cell><Text>Tx Hash</Text></Cell>
         <Cell><Text>From</Text></Cell>

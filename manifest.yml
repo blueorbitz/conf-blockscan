@@ -6,40 +6,31 @@ modules:
       route: space-configuration
   macro:
     - key: blockscan-balance
-      title: Blockscan Balance
+      title: Account Balance
       description: Balance of a blockchain account
       function: balance-macro
       config:
         function: balance-config
     - key: blockscan-transaction-list
-      title: Blockscan Transaction
+      title: Account Transaction
       description: Transaction information of an account
       function: transaction-list-macro
       config:
         function: balance-config
     - key: blockscan-transaction-hash
-      title: Blockscan Transaction Hash
+      title: Transaction Hash Info
       description: Information of a transaction
       function: transaction-hash-macro
       config:
         function: transaction-hash-config
-    # - key: blockscan-block
-    #   title: Blockscan Block Info
-    #   description: Information about the block
-    #   function: block-macro
-    #   config:
-    #     function: block-config
-    # - key: blockscan-coin-info
-    #   # coin id: api.coingecko.com/api/v3/coins/million
-    #   # list of asset: api.coingecko.com/api/v3/asset_platforms
-    #   # asset -> contract: api.coingecko.com/api/v3/coins/ethereum/contract/0x6B4c7A5e3f0B99FCD83e9c089BDDD6c7FCe5c611
-    #   title: Blockscan Coin Detail
-    #   description: Information about a coin or token
-    #   function: coin-macro
-    #   config:
-    #     function: coin-config
+    - key: blockscan-nft-asset
+      title: NFT Image
+      description: Display asset base on ERC-721 (NFT)
+      function: nft-asset
+      config:
+        function: nft-asset-config
     - key: blockscan-coin-conv
-      title: Blockscan Converter
+      title: Coin Converter
       description: Convert crypto currency value
       function: coin-conv-macro
       config:
@@ -71,14 +62,10 @@ modules:
       handler: transaction.hashMacro
     - key: transaction-hash-config
       handler: transaction.hashConfig
-    - key: block-macro
-      handler: block.macro
-    - key: block-config
-      handler: block.config
-    - key: coin-macro
-      handler: coin.macro
-    - key: coin-config
-      handler: coin.config
+    - key: nft-asset
+      handler: nft.macro
+    - key: nft-asset-config
+      handler: nft.config
     - key: coin-conv-macro
       handler: coin.convMacro
     - key: coin-conv-config
@@ -89,7 +76,6 @@ modules:
       handler: schedule.clean
 app:
   id: ari:cloud:ecosystem::app/432fed33-28ea-4214-8f6c-8f5ddacc0435
-  name: conf-blockscan
   runtime:
     snapshots: false
 permissions:
