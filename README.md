@@ -66,6 +66,7 @@ See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how
   - proper guideline and useage of storage
 - TextField Type, eg. password, or regex protection
 - Confluence macro native editing
+- Schedule didn't get trigger, no easy way to test trigger beside manually calling it
 
 ## Reference
 

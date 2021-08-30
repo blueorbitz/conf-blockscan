@@ -3,13 +3,15 @@ import ForgeUI, {
   Macro,
   Image,
   Fragment,
-  Heading,
+  DateLozenge,
   TagGroup, Tag,
   useState,
   useConfig,
 } from '@forge/ui';
 import BlockAPI from '../utils/blockchain-api';
-import { fetch } from '@forge/api';
+import {
+  Description, DescriptionLink
+} from '../utils/ui';
 
 const App = () => {
   const config = useConfig();
@@ -21,26 +23,40 @@ const App = () => {
     return response;
   }, {});
 
-  const [test] = useState(async () => {
-    const response = await fetch('https://etherscan.io/tx/0x4c3ff2ecbd7f5634e88654473aa58afdbc6ba795e5d74c7e5431ae5f49cd3514');
-    console.log(await response.text());
-  });
-
   if (config == null || config.contract == null || config.tokenId == null)
     return null;
 
-  if (config.settings == null || config.settings.indexOf('info') === -1)
+  if (config.display === 'image')
     return <Image src={image.image_url} alt={image.name} size={config.size} />
 
   else
     return <Fragment>
-      <Heading size="medium">{image.name}</Heading>
-      <Image src={image.image_url} alt={image.name} size={config.size} />
+      <Description title='Name'>
+        <DescriptionLink href={image.permalink}>
+          {image.name}
+        </DescriptionLink>
+      </Description>
       <TagGroup>
+        <Tag text='Traits' color='blue' />
         {image.traits.map(o =>
           <Tag text={`${o.trait_type}: ${o.value}`} />
         )}
-    </TagGroup>
+      </TagGroup>
+      <Description title='Owner'>
+        {image.owner.user.username || image.owner.address}
+      </Description>
+      <Description title='Creator'>
+        {image.creator.user.username || image.creator.address}
+      </Description>
+      <Description title='Last Tx'>
+        <DescriptionLink href={'https://etherscan.io/tx/' + image.last_sale.transaction.transaction_hash}>
+          {image.last_sale.transaction.transaction_hash}
+        </DescriptionLink>
+      </Description>
+      <Description title='Last Sale'>
+        <DateLozenge value={new Date(image.last_sale.event_timestamp).getTime()} />
+        {`${parseFloat(image.last_sale.payment_token.eth_price).toFixed(6)} ${image.last_sale.payment_token.symbol} ($${parseFloat(image.last_sale.payment_token.usd_price).toFixed(2)})`}
+      </Description>
     </Fragment>
 };
 

@@ -3,8 +3,8 @@ import ForgeUI, {
   render,
   MacroConfig,
   TextField,
-  CheckboxGroup, Checkbox,
   Select, Option,
+  RadioGroup, Radio,
 } from '@forge/ui';
 
 const Config = () => {
@@ -16,9 +16,10 @@ const Config = () => {
         {['xsmall', 'small', 'medium', 'large', 'xlarge']
           .map(o => <Option label={o} value={o} />)}
       </Select>
-      <CheckboxGroup label='Others' name='settings'>
-        <Checkbox label='Show Info' value='info' />
-      </CheckboxGroup>
+      <RadioGroup name='display' label='Display Mode'>
+        <Radio defaultChecked label='Image' value='image' />
+        <Radio label='Info' value='info' />
+      </RadioGroup>
     </Fragment>
   );
 };
