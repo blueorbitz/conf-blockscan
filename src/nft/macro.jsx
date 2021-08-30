@@ -9,6 +9,7 @@ import ForgeUI, {
   useConfig,
 } from '@forge/ui';
 import BlockAPI from '../utils/blockchain-api';
+import { fetch } from '@forge/api';
 
 const App = () => {
   const config = useConfig();
@@ -19,6 +20,11 @@ const App = () => {
     const response = await BlockAPI.GetNFTAsset(config.contract, config.tokenId);
     return response;
   }, {});
+
+  const [test] = useState(async () => {
+    const response = await fetch('https://etherscan.io/tx/0x4c3ff2ecbd7f5634e88654473aa58afdbc6ba795e5d74c7e5431ae5f49cd3514');
+    console.log(await response.text());
+  });
 
   if (config == null || config.contract == null || config.tokenId == null)
     return null;

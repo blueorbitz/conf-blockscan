@@ -80,12 +80,24 @@ const RenderCoinBalance = ({ data }) => {
   const config = useConfig() || {};
 
   const simple = () => {
-    switch (data.platform) {
-      case 'btc': return <Text>{satoshiToBtc(data.balance || 0)} BTC</Text>;
-      case 'eth': return <Text>{gweiToEth(data.balance || 0)} ETH</Text>;
-      case 'doge': return <Text>{satoshiToBtc(data.balance || 0)} Doge</Text>;
-      default: return <Text>Coin type render not supported</Text>;
+    let value = ''
+    if (config.settings.indexOf('convUsd') !== -1) {
+      switch (data.platform) {
+        case 'btc': value = satoshiToBtc(data.balance || 0) * data.marketPrice; break;
+        case 'eth': value = gweiToEth(data.balance || 0) * data.marketPrice; break;
+        case 'doge': value = satoshiToBtc(data.balance || 0) * data.marketPrice; break;
+        default: return <Text>Coin type render not supported</Text>;
+      }
+      return <Text>{toReadableFiat(value)} USD</Text>
     }
+
+    else
+      switch (data.platform) {
+        case 'btc': return <Text>{satoshiToBtc(data.balance || 0)} BTC</Text>;
+        case 'eth': return <Text>{gweiToEth(data.balance || 0)} ETH</Text>;
+        case 'doge': return <Text>{satoshiToBtc(data.balance || 0)} Doge</Text>;
+        default: return <Text>Coin type render not supported</Text>;
+      }
   }
 
   const content = () => {
@@ -97,7 +109,7 @@ const RenderCoinBalance = ({ data }) => {
     }
   };
 
-  return config.settings && config.settings.length === 0
+  return config.settings && config.settings.indexOf('details') === -1
     ? simple()
     : content();
 };
@@ -120,15 +132,21 @@ const RenderCoin = () => {
     : <RenderCoinBalance data={balance} />
 };
 
-const RenderTokenBalance = ({ data }) =>
-  <Fragment>
+const RenderTokenBalance = ({ data }) => {
+  const config = useConfig() || {};
+
+  const simple = () => config.settings.indexOf('convUsd') !== -1
+    ? <Text>{toReadableFiat(data.balance * data.marketPrice)} USD</Text>
+    : <Text>{`${data.balance} ${data.symbol.toUpperCase()}`}</Text>;
+
+  const content = () => <Fragment>
     <Description title='Contract'>
       <DescriptionLink href={'https://etherscan.io/address/' + data.c_address}>
         {data.contract ? data.contract.name : data.contractName}
       </DescriptionLink>
     </Description>
     <Description title='Wallet'>
-      <DescriptionLink href={'https://etherscan.io/address/' + data.address}>
+      <DescriptionLink href={'https://etherscan.io/token/' + data.c_address + '?a=' + data.address}>
         {data.wallet ? data.wallet.name : data.address}
       </DescriptionLink>
     </Description>
@@ -142,6 +160,11 @@ const RenderTokenBalance = ({ data }) =>
       {`${toReadableFiat(data.balance * data.marketPrice)} USD`}
     </Description>
   </Fragment>;
+
+  return config.settings && config.settings.indexOf('details') === -1
+    ? simple()
+    : content();
+}
 
 const fetchTokenBalanceFromConfig = async () => {
   const config = useConfig() || {};

@@ -107,6 +107,7 @@ const Config = () => {
       <InputStrategy />
       <CheckboxGroup label='Others' name='settings'>
         <Checkbox label='Show details' value='details' />
+        <Checkbox label='Value in USD' value='convUsd' />
       </CheckboxGroup>
     </Fragment>
   );
