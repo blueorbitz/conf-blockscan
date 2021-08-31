@@ -3,8 +3,8 @@ import ForgeUI, {
   render,
   MacroConfig,
   TextField,
-  Select,
-  Option,
+  Select, Option,
+  RadioGroup, Radio,
 } from '@forge/ui';
 import { supportedCoins } from '../utils/blockchain-api';
 
@@ -17,6 +17,10 @@ const Config = () => {
         )}
       </Select>
       <TextField label='Hash' name='hash' />
+      <RadioGroup name='display' label='Display Mode'>
+        <Radio defaultChecked label='List' value='list' />
+        <Radio label='Table' value='table' />
+      </RadioGroup>
     </Fragment>
   );
 };

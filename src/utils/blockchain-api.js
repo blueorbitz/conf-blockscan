@@ -50,6 +50,11 @@ export default class BlockchainApi {
     }
   }
 
+  static async GetWebTransaction(hash) {
+    const esapi = new etherscan();
+    return await esapi.transaction(hash);
+  }
+
   static async GetContractInfo(platform, c_address) {
     const cgapi = new coingecko();
     return await cgapi.contractInfo(platform, c_address);
