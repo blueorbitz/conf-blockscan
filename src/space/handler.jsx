@@ -196,8 +196,8 @@ const App = () => {
         onClose={() => setContractOpen(false)}
       />}
       <Text>&nbsp;</Text>
-      <Text><Strong>Watch Url </Strong>{triggerWatch}</Text>
-      <Text><Strong>Clean Url </Strong>{triggerClean}</Text>
+      {/* <Text><Strong>Watch Url </Strong>{triggerWatch}</Text>
+      <Text><Strong>Clean Url </Strong>{triggerClean}</Text> */}
     </Fragment>
   );
 };

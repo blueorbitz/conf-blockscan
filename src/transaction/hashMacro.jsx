@@ -53,7 +53,7 @@ const RenderBTC = ({ tx }) => {
 const RenderETH = ({ tx }) => {
   const [info] = useState(async () => {
     const data = await BlockAPI.GetWebTransaction(tx.hash);
-    console.log(data);
+    // console.log('Data', data);
     return data;
   });
   const config = useConfig();
@@ -67,13 +67,16 @@ const RenderETH = ({ tx }) => {
     <Description title='Status'>
       {tx.confirmed} <Strong>{info['Status']}</Strong>
     </Description>
-    <Description title='From'>
-      <DescriptionLink href={'https://etherscan.io/address/' + info['From'][0]}>
-        {info['From'].length === 2 ? info['From'][1] : info['From'][0]}
-      </DescriptionLink>
-    </Description>
     {
-      info['To']
+      info['From'] &&
+      <Description title='From'>
+        <DescriptionLink href={'https://etherscan.io/address/' + info['From'][0]}>
+          {info['From'].length === 2 ? info['From'][1] : info['From'][0]}
+        </DescriptionLink>
+      </Description>
+    }
+    {
+      (info['To'] || info['Interacted With (To)']) && (info['To']
         ? <Description title='To'>
           <DescriptionLink href={'https://etherscan.io/address/' + info['To'][0]}>
             {info['To'].length === 2 ? info['To'][1] : info['To'][0]}
@@ -83,15 +86,16 @@ const RenderETH = ({ tx }) => {
           <Description title='To'>{info['Interacted With (To)'].title}</Description>
           {info['Interacted With (To)'].transfers.map((o, i) => <Description title={`Tx ${i + 1}`}>{o}</Description>)}
         </Fragment>
+      )
     }
     {
       info['Tokens Transferred'] &&
       <Description title='Transfer'>
         <Fragment>
-        {info['Tokens Transferred'].map(o => typeof o !== 'string'
-          ? <Link href={`https//etherscan.in${o.href}`}>{o.text} </Link>
-          : o
-        )}
+          {info['Tokens Transferred'].map(o => typeof o !== 'string'
+            ? <Link href={`https//etherscan.in${o.href}`}>{o.text} </Link>
+            : o
+          )}
         </Fragment>
       </Description>
     }

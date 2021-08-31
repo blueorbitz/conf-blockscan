@@ -31,7 +31,16 @@ export default class EtherScan extends CacheRequest {
     if (hash.slice(0, 2) !== '0x')
       hash = '0x' + hash;
 
-    const html = await this.requestUrl(`/tx/${hash}`);
+    const path = `/tx/${hash}`;
+    const urlr = `https://etherscan.io${path}`;
+
+    const cacheRes = await this.getCache(path, {});
+    if (cacheRes !== false)
+      return cacheRes;
+
+    console.log('etherscan:', urlr);
+    const response = await fetch(urlr);
+    const html = await response.text();
     const $ = cheerio.load(html);
 
     const data = {};
@@ -87,6 +96,8 @@ export default class EtherScan extends CacheRequest {
       }
     });
 
+    this.addCache(path, {}, data);
+
     return data;
   }
   
@@ -111,26 +122,6 @@ export default class EtherScan extends CacheRequest {
       this.addCache(action, options, json);
 
       return json;
-    } catch (e) {
-      processError(e);
-    }
-  }
-  
-  async requestUrl(url) {
-    try {
-      const cacheRes = await this.getCache(url, {});
-      if (cacheRes !== false)
-        return cacheRes;
-
-      const urlr = `https://etherscan.io${url}`;
-      console.log('etherscan:', urlr);
-
-      const response = await fetch(urlr);
-      const text = await response.text();
-
-      this.addCache(url, {}, text);
-
-      return text;
     } catch (e) {
       processError(e);
     }

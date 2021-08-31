@@ -8,7 +8,7 @@ import ForgeUI, {
   useState,
   useConfig,
 } from '@forge/ui';
-import BlockAPI from '../utils/blockchain-api';
+import BlockAPI, { gweiToEth, toReadableFiat } from '../utils/blockchain-api';
 import {
   Description, DescriptionLink
 } from '../utils/ui';
@@ -20,11 +20,16 @@ const App = () => {
       return {};
 
     const response = await BlockAPI.GetNFTAsset(config.contract, config.tokenId);
+    if (response.error)
+      console.log('response', response);
     return response;
-  }, {});
+  }, null);
 
   if (config == null || config.contract == null || config.tokenId == null)
     return null;
+
+  if (image == null)
+    return;
 
   if (config.display === 'image')
     return <Image src={image.image_url} alt={image.name} size={config.size} />
@@ -43,10 +48,10 @@ const App = () => {
         )}
       </TagGroup>
       <Description title='Owner'>
-        {image.owner.user.username || image.owner.address}
+        {(image.owner.user && image.owner.user.username) || image.owner.address}
       </Description>
       <Description title='Creator'>
-        {image.creator.user.username || image.creator.address}
+        {(image.creator.user && image.creator.user.username) || image.creator.address}
       </Description>
       <Description title='Last Tx'>
         <DescriptionLink href={'https://etherscan.io/tx/' + image.last_sale.transaction.transaction_hash}>
@@ -55,7 +60,7 @@ const App = () => {
       </Description>
       <Description title='Last Sale'>
         <DateLozenge value={new Date(image.last_sale.event_timestamp).getTime()} />
-        {`${parseFloat(image.last_sale.payment_token.eth_price).toFixed(6)} ${image.last_sale.payment_token.symbol} ($${parseFloat(image.last_sale.payment_token.usd_price).toFixed(2)})`}
+        {`${gweiToEth(image.last_sale.total_price).toFixed(6)} ${image.last_sale.payment_token.symbol} ($${toReadableFiat(gweiToEth(image.last_sale.total_price) * image.last_sale.payment_token.usd_price)})`}
       </Description>
     </Fragment>
 };

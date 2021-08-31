@@ -28,10 +28,10 @@ const RenderBTC = ({ data = {} }) =>
       </DescriptionLink>
     </Description>
     <Description title='Balance'>
-      {satoshiToBtc(data.balance || 0)} BTC
+      {satoshiToBtc(data.balance || 0).toFixed(5)} BTC
     </Description>
     <Description title='Unconfirmed Balance'>
-      {satoshiToBtc(data.unconfirmed_balance || 0)} BTC
+      {satoshiToBtc(data.unconfirmed_balance || 0).toFixed(5)} BTC
     </Description>
     <Description title='Market Value'>
       {`${toReadableFiat(satoshiToBtc(data.balance || 0) * data.marketPrice)} USD`}
@@ -47,10 +47,10 @@ const RenderETH = ({ data = {} }) =>
       </DescriptionLink>
     </Description>
     <Description title='Balance'>
-      {gweiToEth(data.balance || 0)} ETH
+      {gweiToEth(data.balance || 0).toFixed(5)} ETH
     </Description>
     <Description title='Unconfirmed Balance'>
-      {gweiToEth(data.unconfirmed_balance || 0)} ETH
+      {gweiToEth(data.unconfirmed_balance || 0).toFixed(5)} ETH
     </Description>
     <Description title='Market Value'>
       {`${toReadableFiat(gweiToEth(data.balance || 0) * data.marketPrice)} USD`}
