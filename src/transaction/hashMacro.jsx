@@ -53,9 +53,8 @@ const RenderBTC = ({ tx }) => {
 const RenderETH = ({ tx }) => {
   const [info] = useState(async () => {
     const data = await BlockAPI.GetWebTransaction(tx.hash);
-    // console.log('Data', data);
     return data;
-  });
+  }, null);
   const config = useConfig();
 
   if (config.display === 'list') return <Fragment>
@@ -113,20 +112,30 @@ const RenderETH = ({ tx }) => {
       <Cell><Text>Value</Text></Cell>
     </Head>
     <Row>
-      <Cell><Text><Link href={'https://etherscan.io/tx/' + info['Transaction Hash']}>
-        {info['Transaction Hash'].slice(0, 20) + '...'}
-      </Link></Text></Cell>
-      <Cell><Text>{tx.confirmed}</Text></Cell>
-      <Cell><Text><DescriptionLink href={'https://etherscan.io/address/' + info['From'][0]}>
-        {info['From'].length === 2 ? info['From'][1] : info['From'][0]}
-      </DescriptionLink></Text></Cell>
       <Cell><Text>
         {
-          info['To']
+          info['Transaction Hash'] &&
+          <Link href={'https://etherscan.io/tx/' + info['Transaction Hash']}>
+            {info['Transaction Hash'].slice(0, 20) + '...'}
+          </Link>
+        }
+      </Text></Cell>
+      <Cell><Text>{tx.confirmed}</Text></Cell>
+      <Cell><Text>
+        {
+          info['From'] &&
+          <DescriptionLink href={'https://etherscan.io/address/' + info['From'][0]}>
+            {info['From'].length === 2 ? info['From'][1] : info['From'][0]}
+          </DescriptionLink>
+        }
+      </Text></Cell>
+      <Cell><Text>
+        {
+          (info['To'] || info['Interacted With (To)']) && (info['To']
             ? <DescriptionLink href={'https://etherscan.io/address/' + info['To'][0]}>
               {info['To'].length === 2 ? info['To'][1] : info['To'][0]}
             </DescriptionLink>
-            : info['Interacted With (To)'].title
+            : info['Interacted With (To)'].title)
         }
       </Text></Cell>
       <Cell><Text>{gweiToEth(tx.total).toFixed(5) + ' ETH'}</Text></Cell>

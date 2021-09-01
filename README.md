@@ -1,6 +1,8 @@
-# Forge Hello World
+# Confluence Blockscan
 
-This project contains a Forge app written in Javascript that displays `Hello World!` in a Confluence macro. 
+This application empowers confluence users by providing blockchain-related macros such as checking for wallet balance, displaying transactions and NFT assets, and watching alerts for favorite wallets.
+
+This project contains a Forge app written in Javascript in a Confluence macro. 
 
 See [developer.atlassian.com/platform/forge/](https://developer.atlassian.com/platform/forge) for documentation and tutorials explaining Forge.
 
@@ -27,47 +29,26 @@ forge install
 forge tunnel
 ```
 
+### Environment Variable
+
+The following environment variable is need for the application to function properly:
+- `TOKEN`: (--encrypt) Get the key from [Blockcypher](https://www.blockcypher.com).
+- `ETHERSCAN_APIKEY`: (--encrypt) Get the key from  [EtherScan](https://etherscan.io).
+
+Refer to [configure environment variable](https://developer.atlassian.com/platform/forge/environments/#environment-variables).
+
 ### Notes
 - Use the `forge deploy` command when you want to persist code changes.
 - Use the `forge install` command when you want to install the app on a new site.
 - Once the app is installed on a site, the site picks up the new app changes you deploy without needing to rerun the install command.
 - You can always delete your app from the site by running the `forge uninstall` command.
+- No external `APIKEY` is needed at the moment.
 
-## Support
+## Inspiration
+- Blockchain technology and adoption have been growing in recent years. I notice that there is a gap in the current marketplace without this kind of support.
+- Also, I am passionate about this technology space. Thus, this is the right opportunity to blend them together to create a solution that can be used by people or companies that has present in the blockchain space.
 
-See [Get help](https://developer.atlassian.com/platform/forge/get-help/) for how to get help and provide feedback.
-
-## Improvement
-
-- Stream Forge logs when using forge tunnel
-- Not showing error when library import was not found.
-  - Debugging why config is not showing is frustrating
-  - (After debug) - No clear direction when should use `forge deploy` when running `forge tunnel` to reload the manifest.yml
-- Recommended best practice for large-file structure
-  - nested folder cannot detect index.jsx
-- Forge UI kit component have limited functionality.
-  - Should at least have CSS capability to overwrite
-  - eg. enable `style` for simple overwrite
-  - Modal no ok button, document could explain the intention of such design
-  - Select `onChange` event, and Input `onInput` event.
-- Hot-reloading for custom-ui to make it easier for development
-  - Eg. enable `url` to serve `localhost:3000` in the `resource`
-  - (solved) https://developer.atlassian.com/platform/forge/tunneling/
-- MacroConfig documentation about use config and form is interlink.
-  - PS: it is documented in MacroConfig
-  - However, error message could be better. Either in console or UI.
-  - Stating `MacroConfig` only supprt type, instead of just yellow warning sign.
-- Forge using library that call external API.
-  - have to use `@forge/api` `fetch` only.
-  - possible create a bridge to map eg, axios or request?
-- Caching fetch (CDN) to improve static loading performance.
-- Storage no bulk delete.
-  - trying to access 'deleteAppStoreEntity' too often.
-  - proper guideline and useage of storage
-- TextField Type, eg. password, or regex protection
-- Confluence macro native editing
-- Schedule didn't get trigger, no easy way to test trigger beside manually calling it
-
-## Reference
-
-- Blockchain node api [GetBlock](https://getblock.io/en/)
+## What's next for Blockscan
+- Add test
+- Improve UI/UX of the macros
+- Fix macro error cause by the third-party timeout or failed request. This also happens when the cache is cleaned.
